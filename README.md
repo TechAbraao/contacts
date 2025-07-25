@@ -1,4 +1,4 @@
-# API REST de Contatos | Nubank Challenge
+# API REST de Contatos
 
 ### Tecnologias
 <section align="left">
@@ -17,3 +17,25 @@
     <img alt="Static Badge" src="https://img.shields.io/badge/Hibernate-grey?style=flat&logo=Hibernate">
 </section>
 
+#### 🔐 Autorização
+
+| Método | URL                                         | Descrição                                         |
+| ------ | ------------------------------------------- | ------------------------------------------------- |
+| POST   | `/api/auth/register`                        | Registrar um novo usuário                         |
+| POST   | `/api/auth/login`                           | Login e obter Token JWT                           |
+
+#### 👤 Usuário
+
+| Método | URL                                         | Descrição                                         |
+| ------ | ------------------------------------------- | ------------------------------------------------- |
+| GET   | `/api/users/me`                              | Buscar dados do usuário autenticado               |
+
+#### 📇 Contatos (Apenas para Usuários Autenticados)
+
+| Método | URL                  | Descrição                    |
+| ------ | -------------------- | ---------------------------- |
+| GET    | `/api/contacts`      | Listar contatos do usuário   |
+| GET    | `/api/contacts/{id}` | Buscar um contato específico |
+| POST   | `/api/contacts`      | Criar novo contato           |
+| PUT    | `/api/contacts/{id}` | Atualizar contato            |
+| DELETE | `/api/contacts/{id}` | Deletar contato              |

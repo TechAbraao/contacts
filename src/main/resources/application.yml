@@ -1,0 +1,4 @@
+spring:
+  application:
+    name: API REST Contacts
+    description: API REST de Contatos desenvolvida com Spring Boot
