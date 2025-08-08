@@ -5,7 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
-import org.techabraao.api.contacts.dto.SignInDTO;
+import org.techabraao.api.contacts.dto.request.SignInDTO;
+import org.techabraao.api.contacts.dto.request.SignUpDTO;
 import org.techabraao.api.contacts.services.TokenServices;
 import org.techabraao.api.contacts.services.UserServices;
 
@@ -20,14 +21,16 @@ public class AuthorizationController {
 
     /* Endpoint para registrar usuário. */
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestBody @Valid SignInDTO credentials) throws Exception {
+    public ResponseEntity<?> signup(@RequestBody @Valid SignUpDTO credentials) throws Exception {
         try {
 
             return ResponseEntity.ok(credentials);
 
         } catch (Exception exception) {
             String messageException = exception.getMessage();
-            throw new Exception("Error: " + messageException);
+            return ResponseEntity
+                    .badRequest()
+                    .body(messageException);
         }
     };
 

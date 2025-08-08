@@ -1,4 +1,4 @@
-package org.techabraao.api.contacts.dto;
+package org.techabraao.api.contacts.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 
