@@ -30,6 +30,22 @@ public class TokenServices {
         }
     };
 
+    public String validateToken(String token) {
+        try {
+            Algorithm algorithm = Algorithm.HMAC256("SECRETKEY");
+
+            return JWT.require(algorithm)
+                    .withIssuer("contactsAPI")
+                    .build()
+                    .verify(token)
+                    .getSubject();
+
+        } catch (JWTVerificationException exception) {
+            String messageException = exception.getMessage();
+            throw new JWTVerificationException("Invalid Token: " + messageException);
+        }
+    }
+
    private Instant generateExpirationDate() {
         return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
    }

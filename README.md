@@ -18,25 +18,29 @@
 <img alt="Static Badge" src="https://img.shields.io/badge/Token JWT-grey?style=flat&logo=JSON">
 </section>
 
-#### 🔐 Autorização
+#### 🔐 Authorization
 
-| Método | URL                                         | Descrição                                         |
-| ------ | ------------------------------------------- | ------------------------------------------------- |
-| POST   | `/api/auth/register`                        | Registrar um novo usuário                         |
-| POST   | `/api/auth/login`                           | Login e obter Token JWT                           |
+| Method | URL                          | Description                |
+| ------ | ---------------------------- | -------------------------- |
+| POST   | `/api/authorization/signup`  | Register a new user        |
+| POST   | `/api/authorization/signin`  | Login and obtain JWT token |
+| POST   | `/api/authorization/signout` | Logout                     |
 
-#### 👤 Usuário
 
-| Método | URL                                         | Descrição                                         |
-| ------ | ------------------------------------------- | ------------------------------------------------- |
-| GET   | `/api/users/me`                              | Buscar dados do usuário autenticado               |
+#### 👤 User
 
-#### 📇 Contatos (Apenas para Usuários Autenticados)
+| Method | URL             | Description                 |
+| ------ | --------------- | --------------------------- |
+| GET    | `/api/users/me` | Get authenticated user data |
 
-| Método | URL                  | Descrição                    |
-| ------ | -------------------- | ---------------------------- |
-| GET    | `/api/contacts`      | Listar contatos do usuário   |
-| GET    | `/api/contacts/{id}` | Buscar um contato específico |
-| POST   | `/api/contacts`      | Criar novo contato           |
-| PUT    | `/api/contacts/{id}` | Atualizar contato            |
-| DELETE | `/api/contacts/{id}` | Deletar contato              |
+
+#### 📇 Contacts (Authenticated Users Only)
+
+| Method | URL                  | Description            |
+| ------ | -------------------- | ---------------------- |
+| GET    | `/api/contacts`      | List user’s contacts   |
+| GET    | `/api/contacts/{id}` | Get a specific contact |
+| POST   | `/api/contacts`      | Create a new contact   |
+| PUT    | `/api/contacts/{id}` | Update a contact       |
+| DELETE | `/api/contacts/{id}` | Delete a contact       |
+

@@ -1,15 +1,29 @@
 package org.techabraao.api.contacts.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.util.UUID;
 
 @Table(name = "contacts", schema = "public")
 @Entity
 @Getter
 @Setter
 @EntityListeners(AuditingEntityListener.class)
-public class ContactsModel {}
+public class ContactsModel {
+
+    @Id
+    @Column(name = "id", nullable = false, unique = true)
+    UUID id;
+
+    @Column(name = "fullname", nullable = false)
+    String fullName;
+
+    @Column(name = "phone", unique = true, nullable = false)
+    int phone;
+
+    @Column(name = "email", unique = true, nullable = false)
+    String email;
+}
