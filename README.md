@@ -1,4 +1,4 @@
-# API REST de Contatos
+# REST API for Contacts
 
 ### Tecnologias
 <section align="left">
