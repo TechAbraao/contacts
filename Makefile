@@ -1,54 +1,70 @@
 # ============================
-# Configurações
+# Makefile Settings
+# By: Abraão V. S. Santos
 # ============================
 COMPOSE_DIR := compose
 COMPOSE_FILE := $(COMPOSE_DIR)/docker-compose.yml
 ENV_FILE := $(COMPOSE_DIR)/.env
 
-# Nome do projeto Docker Compose (para isolar containers)
-PROJECT_NAME := contacts-api
+# Docker Compose project name (to isolate containers)
+PROJECT_NAME := contacts-rest-api
 
 # ============================
-# Comandos do Docker Compose
+# Docker Compose Commands
 # ============================
 up:
-	@echo "🚀 Subindo containers..."
+	@echo "🚀 Starting containers..."
 	docker compose -p $(PROJECT_NAME) --env-file $(ENV_FILE) -f $(COMPOSE_FILE) up -d
 
 down:
-	@echo "🛑 Derrubando containers..."
+	@echo "🛑 Stopping and removing containers..."
 	docker compose -p $(PROJECT_NAME) --env-file $(ENV_FILE) -f $(COMPOSE_FILE) down
+
+stop:
+	@echo "🛑 Stopping containers (without removing)..."
+	docker compose -p $(PROJECT_NAME) --env-file $(ENV_FILE) -f $(COMPOSE_FILE) stop
+
+start:
+	@echo "🚀 Starting stopped containers..."
+	docker compose -p $(PROJECT_NAME) --env-file $(ENV_FILE) -f $(COMPOSE_FILE) start
 
 restart: down up
 
 logs:
-	@echo "📜 Logs dos serviços..."
+	@echo "📜 Showing service logs..."
 	docker compose -p $(PROJECT_NAME) --env-file $(ENV_FILE) -f $(COMPOSE_FILE) logs -f
 
 ps:
 	docker compose -p $(PROJECT_NAME) --env-file $(ENV_FILE) -f $(COMPOSE_FILE) ps
 
 build:
-	@echo "🏗️ Buildando imagens..."
+	@echo "🏗️ Building images..."
 	docker compose -p $(PROJECT_NAME) --env-file $(ENV_FILE) -f $(COMPOSE_FILE) build
 
 # ============================
-# Limpeza
+# Cleanup
 # ============================
 clean:
-	@echo "🧹 Limpando containers, volumes e imagens órfãs..."
+	@echo "🧹 Cleaning containers, volumes, and orphan images..."
 	docker compose -p $(PROJECT_NAME) --env-file $(ENV_FILE) -f $(COMPOSE_FILE) down -v --remove-orphans
 	docker system prune -f
 
 # ============================
-# Ajuda
+# Help
 # ============================
 help:
-	@echo "Comandos disponíveis:"
-	@echo "  make up        -> Sobe os containers"
-	@echo "  make down      -> Derruba os containers"
-	@echo "  make restart   -> Reinicia os containers"
-	@echo "  make logs      -> Mostra logs em tempo real"
-	@echo "  make ps        -> Lista containers ativos"
-	@echo "  make build     -> Faz o build das imagens"
-	@echo "  make clean     -> Remove tudo (containers, volumes, imagens órfãs)"
+	@echo ""
+	@echo "Available commands:"
+	@echo "  make up        -> Start containers"
+	@echo "  make down      -> Stop and remove containers"
+	@echo "  make stop      -> Stop containers (keep them)"
+	@echo "  make start     -> Start stopped containers"
+	@echo "  make restart   -> Restart containers (down + up)"
+	@echo "  make logs      -> Show real-time logs"
+	@echo "  make ps        -> List active containers"
+	@echo "  make build     -> Build images"
+	@echo "  make clean     -> Remove containers, volumes, and orphan images"
+	@echo ""
+
+# Default target when running only `make`
+.DEFAULT_GOAL := help

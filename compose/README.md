@@ -66,7 +66,7 @@ After running make up:
 - PgAdmin: http://localhost:${PGADMIN_HOST}
 - Login using the credentials from .env
 
-Cleaning the Environment
+## Cleaning the Environment
 To remove containers, volumes, and orphan images:
 ````bash
 make clean
