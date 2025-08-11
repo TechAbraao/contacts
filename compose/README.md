@@ -50,15 +50,18 @@ PGADMIN_PORT=80
 Starting the Services
 This project uses a Makefile at the root directory to simplify Docker Compose commands.
 
-From the project root, run:
+From the project root, run ``make`` to see the available commands:
 ````bash
-make up       # Start containers
-make down     # Stop containers
-make restart  # Restart containers
-make logs     # Show logs in real time
-make ps       # List active containers
-make build    # Build images
-make clean    # Remove containers, volumes, and orphan images
+Available commands:
+  make up        -> Start containers
+  make down      -> Stop and remove containers
+  make stop      -> Stop containers (keep them)
+  make start     -> Start stopped containers
+  make restart   -> Restart containers (down + up)
+  make logs      -> Show real-time logs
+  make ps        -> List active containers
+  make build     -> Build images
+  make clean     -> Remove containers, volumes, and orphan images
 ````
 🌐 Access
 After running make up:

@@ -20,7 +20,7 @@ public class TokenServices {
 
             String token = JWT.create()
                     .withIssuer("contactsAPI")
-                    .withSubject("")
+                    .withSubject(String.valueOf(user.getId()))
                     .withExpiresAt(generateExpirationDate())
                     .withJWTId(UUID.randomUUID().toString())
                     .sign(algorithm);

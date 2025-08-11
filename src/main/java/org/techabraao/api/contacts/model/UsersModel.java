@@ -47,6 +47,9 @@ public class UsersModel implements UserDetails {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ContactsModel> contacts;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of();

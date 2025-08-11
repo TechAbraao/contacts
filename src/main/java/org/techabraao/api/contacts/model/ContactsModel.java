@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import java.util.UUID;
 
 @Table(name = "contacts", schema = "public")
@@ -22,8 +21,12 @@ public class ContactsModel {
     String fullName;
 
     @Column(name = "phone", unique = true, nullable = false)
-    int phone;
+    Long phone;
 
     @Column(name = "email", unique = true, nullable = false)
     String email;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private UsersModel user;
 }

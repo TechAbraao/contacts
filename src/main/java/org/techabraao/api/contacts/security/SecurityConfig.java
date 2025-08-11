@@ -12,6 +12,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -19,7 +20,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain filter(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filter(HttpSecurity http, SecurityTokenFilter securityTokenFilter) throws Exception {
         return http
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -29,6 +30,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/authorization/signout").permitAll()
                         .anyRequest().authenticated()
                 )
+                .addFilterBefore(securityTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
