@@ -41,8 +41,7 @@ public class TokenServices {
                     .getSubject();
 
         } catch (JWTVerificationException exception) {
-            String messageException = exception.getMessage();
-            throw new JWTVerificationException("Invalid Token: " + messageException);
+            throw new JWTVerificationException("Expired token. Please generate a new token.");
         }
     }
 
