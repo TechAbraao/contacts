@@ -28,6 +28,12 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/authorization/signin").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/authorization/signup").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/authorization/signout").permitAll()
+                        .requestMatchers("/swagger-ui/**",
+                            "/swagger-ui.html",
+                            "/v3/api-docs/**",
+                            "/v3/api-docs.yaml",
+                            "/v3/api-docs.json"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityTokenFilter, UsernamePasswordAuthenticationFilter.class)

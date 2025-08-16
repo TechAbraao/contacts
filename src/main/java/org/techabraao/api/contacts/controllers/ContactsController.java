@@ -1,5 +1,6 @@
 package org.techabraao.api.contacts.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,7 @@ public class ContactsController {
 
     /* Endpoint para adicionar um novo contato */
     @PostMapping
+    @Operation(summary = "Add a new Contact", description = "This endpoint will add a new user")
     public ResponseEntity<?> addContact(@RequestBody @Valid ContactDTO contact){
 
         Boolean checkingExists = contactsServices.verifyEmailOrPhoneExists(contact);
