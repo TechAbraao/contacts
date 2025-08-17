@@ -1,10 +1,8 @@
 package org.techabraao.api.contacts.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.techabraao.api.contacts.model.ContactsModel;
-import org.techabraao.api.contacts.model.UsersModel;
+import org.techabraao.api.contacts.entity.ContactsModel;
 
-import java.util.Optional;
 import java.util.UUID;
 
 public interface ContactsRepository extends JpaRepository<ContactsModel, UUID> {

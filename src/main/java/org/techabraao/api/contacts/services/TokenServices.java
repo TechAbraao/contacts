@@ -3,7 +3,7 @@ package org.techabraao.api.contacts.services;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import org.springframework.stereotype.Service;
-import org.techabraao.api.contacts.model.UsersModel;
+import org.techabraao.api.contacts.entity.UsersModel;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 

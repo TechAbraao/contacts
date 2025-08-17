@@ -3,7 +3,7 @@ package org.techabraao.api.contacts.dto.request;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import org.techabraao.api.contacts.model.ContactsModel;
+import org.techabraao.api.contacts.entity.ContactsModel;
 
 public record ContactDTO(
         @NotBlank(message = "Fullname is required.")

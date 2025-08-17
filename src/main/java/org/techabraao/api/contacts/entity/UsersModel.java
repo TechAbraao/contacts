@@ -1,4 +1,4 @@
-package org.techabraao.api.contacts.model;
+package org.techabraao.api.contacts.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

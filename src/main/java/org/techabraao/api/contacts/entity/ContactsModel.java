@@ -1,4 +1,4 @@
-package org.techabraao.api.contacts.model;
+package org.techabraao.api.contacts.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -15,6 +15,7 @@ public class ContactsModel {
 
     @Id
     @Column(name = "id", nullable = false, unique = true)
+    @GeneratedValue(strategy = GenerationType.UUID)
     UUID id;
 
     @Column(name = "fullname", nullable = false)

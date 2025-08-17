@@ -5,7 +5,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.techabraao.api.contacts.dto.request.SignUpDTO;
-import org.techabraao.api.contacts.model.UsersModel;
+import org.techabraao.api.contacts.entity.UsersModel;
 import org.techabraao.api.contacts.repository.UserRepository;
 
 import java.util.UUID;
