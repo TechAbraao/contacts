@@ -45,4 +45,28 @@
 | PUT    | `/api/users/me/contacts/{contactId}`| Update a contact       |
 | DELETE | `/api/users/me/contacts/{contactId}`| Delete a contact       |
 
+#### Table Model
+```mermaid
+erDiagram
+    USERS {
+        UUID id PK
+        String username
+        String email
+        String password
+        Enum roles
+        LocalDateTime createdAt
+        LocalDateTime updatedAt
+    }
+
+    CONTACTS {
+        UUID id PK
+        String fullName
+        Long phone
+        String email
+        UUID user_id FK
+    }
+
+    USERS ||--o{ CONTACTS : "has many"
+```
+
 

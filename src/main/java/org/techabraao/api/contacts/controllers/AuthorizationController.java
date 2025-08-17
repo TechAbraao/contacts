@@ -22,7 +22,7 @@ import org.techabraao.api.contacts.services.UserServices;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/authorization")
+@RequestMapping("/api/auth")
 @Tag(name = "Authorization", description = "Operations related to authorization and authentication with Token JWT")
 public class AuthorizationController {
 
