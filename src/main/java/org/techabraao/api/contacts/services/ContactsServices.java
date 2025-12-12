@@ -1,34 +1,55 @@
 package org.techabraao.api.contacts.services;
 
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.techabraao.api.contacts.dto.ContactDTO;
-import org.techabraao.api.contacts.entity.ContactsModel;
+import org.techabraao.api.contacts.controllers.ContactsController;
+import org.techabraao.api.contacts.dto.ContactsDTO;
+import org.techabraao.api.contacts.entity.ContactsEntity;
+import org.techabraao.api.contacts.entity.UsersEntity;
+import org.techabraao.api.contacts.mappers.ContactsMapper;
 import org.techabraao.api.contacts.repository.ContactsRepository;
 import org.techabraao.api.contacts.repository.UserRepository;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class ContactsServices {
     private final ContactsRepository contactsRepository;
-    private final UserRepository userRepository;
+    private final UserRepository usersRepository;
 
-    public boolean verifyEmailOrPhoneExists(ContactDTO contact) {
-        boolean emailExists = contactsRepository.existsByEmail(contact.email());
-        boolean phoneExists = contactsRepository.existsByPhone(contact.phone());
-        return emailExists || phoneExists;
+    private final Logger logger = LoggerFactory.getLogger(ContactsServices.class);
+
+    public boolean verifyEmailOrPhoneExists(ContactsDTO contact, UUID userId) {
+        boolean exists = contactsRepository.existsByEmailAndPhoneAndUser_Id(contact.email(), contact.phone(), userId);
+        return exists;
     }
 
-    public ContactsModel addContact(ContactDTO contact, UUID userId) {
-        var authenticatedUser = userRepository
-                .findById(userId)
+    public ContactsDTO addContact(ContactsDTO dto, UUID userId) {
+
+        var user = usersRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found."));
 
-        ContactsModel contactEntity = contact.toContactModel();
-        contactEntity.setUser(authenticatedUser);
+        var entity = ContactsMapper.toEntity(dto);
+        entity.setUser(user);
 
-        return contactsRepository.save(contactEntity);
+        ContactsDTO contacts = ContactsMapper.toDTO(contactsRepository.save(entity));
+
+        return contacts;
     }
+
+    public List<ContactsDTO> allContactsByUserId(UUID userId) {
+        List<ContactsEntity> contacts =
+                contactsRepository.findAllByUserId(userId);
+
+
+        return contacts.stream()
+                .map(ContactsMapper::toDTO)
+                .toList();
+    }
+
 }

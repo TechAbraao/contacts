@@ -39,34 +39,9 @@
 
 | Method | URL                          | Description            |
 | ------ | ---------------------------- | ---------------------- |
-| GET    | `/api/me/contacts`            | List my contacts       |
-| GET    | `/api/me/contacts/{contactId}`| Get a specific contact |
-| POST   | `/api/me/contacts`            | Create a new contact   |
-| PUT    | `/api/me/contacts/{contactId}`| Update a contact       |
-| DELETE | `/api/me/contacts/{contactId}`| Delete a contact       |
-
-#### Table Model
-```mermaid
-erDiagram
-    USERS {
-        UUID id PK
-        String username
-        String email
-        String password
-        Enum roles
-        LocalDateTime createdAt
-        LocalDateTime updatedAt
-    }
-
-    CONTACTS {
-        UUID id PK
-        String fullName
-        Long phone
-        String email
-        UUID user_id FK
-    }
-
-    USERS ||--o{ CONTACTS : "has many"
-```
-
+| GET    | `/api/contacts`            | List my contacts       |
+| GET    | `/api/contacts/{contactId}`| Get a specific contact |
+| POST   | `/api/contacts`            | Create a new contact   |
+| PUT    | `/api/contacts/{contactId}`| Update a contact       |
+| DELETE | `/api/contacts/{contactId}`| Delete a contact       |
 

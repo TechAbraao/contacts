@@ -2,7 +2,7 @@ package org.techabraao.api.contacts.dto;
 
 import jakarta.validation.constraints.*;
 import org.techabraao.api.contacts.enums.Roles;
-import org.techabraao.api.contacts.entity.UsersModel;
+import org.techabraao.api.contacts.entity.UsersEntity;
 
 public record SignUpDTO(
         @NotBlank(message = "Username is required.")
@@ -20,8 +20,8 @@ public record SignUpDTO(
         @Size(min = 4, max = 15, message = "Enter a password that is between 4 and 15 characters long.")
         String password
 ) {
-    public UsersModel toUsersModel(String hashPassword) {
-        UsersModel user = new UsersModel();
+    public UsersEntity toUsersModel(String hashPassword) {
+        UsersEntity user = new UsersEntity();
         user.setUsername(username);
         user.setPassword(hashPassword);
         user.setEmail(email);

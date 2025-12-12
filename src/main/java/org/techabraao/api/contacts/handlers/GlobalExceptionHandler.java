@@ -50,13 +50,13 @@ public class GlobalExceptionHandler {
                 ))
                 .toList();
 
-        Map<String, Object> body = new LinkedHashMap<>();
-
-        body.put("timestamp", LocalDateTime.now().toString());
-        body.put("statusCode", HttpStatus.BAD_REQUEST.value());
-        body.put("success", false);
-        body.put("message", "Validation failed");
-        body.put("errors", errors);
+        Map<String, Object> body = Map.of(
+                "timestamp", LocalDateTime.now().toString(),
+                "statusCode", HttpStatus.BAD_REQUEST.value(),
+                "success", false,
+                "message", "Validation failed.",
+                "errors", errors
+        );
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
     }

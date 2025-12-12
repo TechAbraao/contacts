@@ -1,5 +1,6 @@
 package org.techabraao.api.contacts.dto.response;
 
+import org.techabraao.api.contacts.entity.UsersEntity;
 import org.techabraao.api.contacts.enums.Roles;
 
 public record UserInfoDTO(
@@ -7,7 +8,7 @@ public record UserInfoDTO(
         String email,
         Roles roles
 ) {
-    public UserInfoDTO(org.techabraao.api.contacts.entity.UsersModel user) {
+    public UserInfoDTO(UsersEntity user) {
         this(
             user.getUsername(),
             user.getEmail(),

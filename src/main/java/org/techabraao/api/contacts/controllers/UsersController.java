@@ -12,7 +12,7 @@ import org.techabraao.api.contacts.dto.response.ApiResponse;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.techabraao.api.contacts.dto.response.UserInfoDTO;
 import org.techabraao.api.contacts.exceptions.UserNotFoundException;
-import org.techabraao.api.contacts.entity.UsersModel;
+import org.techabraao.api.contacts.entity.UsersEntity;
 import org.techabraao.api.contacts.services.UserServices;
 
 import java.util.UUID;
@@ -26,10 +26,10 @@ public class UsersController {
 
     @GetMapping
     @Operation(summary = "Get User Infos", description = "Get information from the authenticated user")
-    public ResponseEntity<?> getInfos(@AuthenticationPrincipal UsersModel user){
+    public ResponseEntity<?> getInfos(@AuthenticationPrincipal UsersEntity user){
         UUID userId = user.getId();
 
-        UsersModel userFound = userServices.searchUserById(userId);
+        UsersEntity userFound = userServices.searchUserById(userId);
         if (userFound == null) throw new UserNotFoundException("User not found for some reason.");
 
          UserInfoDTO userInfo = new UserInfoDTO(user);

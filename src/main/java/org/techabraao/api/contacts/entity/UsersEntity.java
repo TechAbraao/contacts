@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.techabraao.api.contacts.enums.Roles;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -20,7 +21,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @EntityListeners(AuditingEntityListener.class)
-public class UsersModel implements UserDetails {
+public class UsersEntity implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -37,6 +38,7 @@ public class UsersModel implements UserDetails {
     String password;
 
     @Column(name = "roles", nullable = false)
+    @Enumerated(EnumType.STRING)
     private Roles roles;
 
     @CreatedDate
@@ -48,7 +50,7 @@ public class UsersModel implements UserDetails {
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ContactsModel> contacts;
+    private List<ContactsEntity> contacts;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

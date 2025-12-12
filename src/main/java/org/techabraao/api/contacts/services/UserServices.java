@@ -5,7 +5,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.techabraao.api.contacts.dto.SignUpDTO;
-import org.techabraao.api.contacts.entity.UsersModel;
+import org.techabraao.api.contacts.entity.UsersEntity;
 import org.techabraao.api.contacts.repository.UserRepository;
 
 import java.util.UUID;
@@ -27,7 +27,7 @@ public class UserServices {
     };
 
     @Transactional(readOnly = true)
-    public UsersModel searchUserById(UUID uuid) {
+    public UsersEntity searchUserById(UUID uuid) {
         return repository.findById(uuid)
                 .orElse(null);
     }

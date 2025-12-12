@@ -3,7 +3,7 @@ package org.techabraao.api.contacts.services;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import org.springframework.stereotype.Service;
-import org.techabraao.api.contacts.entity.UsersModel;
+import org.techabraao.api.contacts.entity.UsersEntity;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 
@@ -14,7 +14,7 @@ import java.util.UUID;
 
 @Service
 public class TokenServices {
-    public String generateToken(UsersModel user) {
+    public String generateToken(UsersEntity user) {
         try {
             Algorithm algorithm = Algorithm.HMAC256("SECRETKEY");
 

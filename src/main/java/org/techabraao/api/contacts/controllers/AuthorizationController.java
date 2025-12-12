@@ -11,14 +11,16 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
-import org.techabraao.api.contacts.dto.SignInDTO;
 import org.techabraao.api.contacts.dto.SignUpDTO;
 import org.techabraao.api.contacts.dto.request.SignInRequest;
 import org.techabraao.api.contacts.dto.response.ApiResponse;
 import org.techabraao.api.contacts.exceptions.DuplicateDataException;
-import org.techabraao.api.contacts.entity.UsersModel;
+import org.techabraao.api.contacts.entity.UsersEntity;
 import org.techabraao.api.contacts.services.TokenServices;
 import org.techabraao.api.contacts.services.UserServices;
+
+import java.time.LocalDateTime;
+import java.util.Map;
 
 
 @RestController
@@ -50,20 +52,30 @@ public class AuthorizationController {
 
     @Operation(summary = "Sign In", description = "Login and authenticate user")
     @PostMapping("/signin")
-
     public ResponseEntity<?> signIn(@RequestBody @Valid SignInRequest request) throws Exception {
         var usernamePassword = new UsernamePasswordAuthenticationToken(request.username(), request.password());
 
         try {
             var auth = this.authenticationManager.authenticate(usernamePassword);
-            var token = tokenServices.generateToken((UsersModel) auth.getPrincipal());
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(ApiResponse.success(HttpStatus.OK.value(), "Token created successfully.", token));
+            var token = tokenServices.generateToken((UsersEntity) auth.getPrincipal());
+
+            Map<String, Object> body = Map.of(
+                    "timestamp", LocalDateTime.now().toString(),
+                    "statusCode", HttpStatus.OK.value(),
+                    "success", true,
+                    "access_token", token
+            );
+            return ResponseEntity.status(HttpStatus.OK).body(body);
+
         } catch (UsernameNotFoundException exception) {
             throw new UsernameNotFoundException("Username not found.");
         } catch (BadCredentialsException exception) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(ApiResponse.error(
+                            HttpStatus.NOT_FOUND.value(),
+                            "Invalid credentials. Please try using different credentials."
+                    ));
         }
-
     }
 }

@@ -11,7 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.techabraao.api.contacts.entity.UsersModel;
+import org.techabraao.api.contacts.entity.UsersEntity;
 import org.techabraao.api.contacts.repository.UserRepository;
 import org.techabraao.api.contacts.services.TokenServices;
 
@@ -40,13 +40,12 @@ public class SecurityTokenFilter extends OncePerRequestFilter {
         if (token != null) {
             var subject = tokenServices.validateToken(token);
             UUID userId = UUID.fromString(subject);
-            Optional<UsersModel> userOptional = userRepository.findById(userId);
+            Optional<UsersEntity> userOptional = userRepository.findById(userId);
 
             if (userOptional.isPresent()) {
                 UserDetails user = userOptional.get();
                 var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-                // System.out.println("Usuário autenticado: " + user.getUsername());
             }
         }
         filterChain.doFilter(request, response);
@@ -58,6 +57,5 @@ public class SecurityTokenFilter extends OncePerRequestFilter {
             return null;
         }
         return authHeader.substring(7).trim();
-
     }
 }
