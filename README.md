@@ -1,4 +1,4 @@
-# REST API for Contacts
+# API RESTful for Contacts
 
 ### Tecnologias
 <section align="left">
@@ -39,11 +39,11 @@
 
 | Method | URL                          | Description            |
 | ------ | ---------------------------- | ---------------------- |
-| GET    | `/api/users/me/contacts`            | List my contacts       |
-| GET    | `/api/users/me/contacts/{contactId}`| Get a specific contact |
-| POST   | `/api/users/me/contacts`            | Create a new contact   |
-| PUT    | `/api/users/me/contacts/{contactId}`| Update a contact       |
-| DELETE | `/api/users/me/contacts/{contactId}`| Delete a contact       |
+| GET    | `/api/me/contacts`            | List my contacts       |
+| GET    | `/api/me/contacts/{contactId}`| Get a specific contact |
+| POST   | `/api/me/contacts`            | Create a new contact   |
+| PUT    | `/api/me/contacts/{contactId}`| Update a contact       |
+| DELETE | `/api/me/contacts/{contactId}`| Delete a contact       |
 
 #### Table Model
 ```mermaid

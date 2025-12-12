@@ -1,34 +1,28 @@
 services:
-  ## POSTGRES ##
   postgres:
     image: postgres:16.3
-    container_name: contacts-postgres
+    container_name: ${POSTGRES_CONTAINER_NAME}
+    restart: always
     ports:
-      - "${DATABASE_PORT}:5432"
+      - "${POSTGRES_PORT}:5432"
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
-      - pgdata:/var/lib/postgresql/data
-    networks:
-      - contacts-network
-  ## PGADMIN ##
+      - postgres_data:/var/lib/postgresql/data
+
   pgadmin:
-    image: dpage/pgadmin4
-    container_name: contacts-pgadmin
+    image: dpage/pgadmin4:8.5
+    container_name: ${PGADMIN_CONTAINER_NAME}
+    restart: always
     ports:
-      - "5050:80"
+      - "${PGADMIN_PORT}:80"
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
     depends_on:
       - postgres
-    networks:
-      - contacts-network
 
 volumes:
-  pgdata:
-
-networks:
-  contacts-network:
+  postgres_data:

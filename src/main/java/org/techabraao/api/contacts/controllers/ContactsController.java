@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.techabraao.api.contacts.dto.request.ContactDTO;
+import org.techabraao.api.contacts.dto.ContactDTO;
 import org.techabraao.api.contacts.entity.UsersModel;
 import org.techabraao.api.contacts.exceptions.DuplicateDataException;
 import org.techabraao.api.contacts.entity.ContactsModel;
@@ -22,20 +22,15 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/users/me/contacts")
+@RequestMapping("/api/me/contacts")
 @Tag(name = "Contacts", description = "Operations related to contacts")
 public class ContactsController {
     private final ContactsRepository contactsRepository;
     private final ContactsServices contactsServices;
 
     @PostMapping
-    @Operation(
-            summary = "Add a new Contact",
-            description = "This endpoint will add a contact based on the authenticated user")
-    public ResponseEntity<?> addContact(
-            @RequestBody @Valid ContactDTO contact,
-            @AuthenticationPrincipal UsersModel me
-    ){
+    @Operation(summary = "Add a new Contact", description = "This endpoint will add a contact based on the authenticated user")
+    public ResponseEntity<?> createContact(@RequestBody @Valid ContactDTO contact, @AuthenticationPrincipal UsersModel me){
         UUID userId = me.getId();
 
         Boolean checkingExists = contactsServices.verifyEmailOrPhoneExists(contact);
@@ -47,6 +42,4 @@ public class ContactsController {
                 .status(HttpStatus.CREATED)
                 .build();
     }
-
-
 }

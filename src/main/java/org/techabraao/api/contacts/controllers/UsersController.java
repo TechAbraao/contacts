@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.techabraao.api.contacts.dto.response.ApiResponse;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.techabraao.api.contacts.dto.response.UserInfoDTO;
-import org.techabraao.api.contacts.exceptions.UserNotFound;
+import org.techabraao.api.contacts.exceptions.UserNotFoundException;
 import org.techabraao.api.contacts.entity.UsersModel;
 import org.techabraao.api.contacts.services.UserServices;
 
@@ -21,10 +21,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @RequestMapping("/api/users/me")
 @Tag(name = "Me (Authenticated user)", description = "Operations related to the authenticated user")
-public class UserController {
-
+public class UsersController {
     private final UserServices userServices;
-
 
     @GetMapping
     @Operation(summary = "Get User Infos", description = "Get information from the authenticated user")
@@ -32,7 +30,7 @@ public class UserController {
         UUID userId = user.getId();
 
         UsersModel userFound = userServices.searchUserById(userId);
-        if (userFound == null) throw new UserNotFound("User not found for some reason.");
+        if (userFound == null) throw new UserNotFoundException("User not found for some reason.");
 
          UserInfoDTO userInfo = new UserInfoDTO(user);
 

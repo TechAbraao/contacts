@@ -1,7 +1,6 @@
 package org.techabraao.api.contacts.handlers;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -10,9 +9,14 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.techabraao.api.contacts.dto.response.ApiResponse;
 import org.techabraao.api.contacts.exceptions.DuplicateDataException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.techabraao.api.contacts.exceptions.UserNotFound;
+import org.techabraao.api.contacts.exceptions.UserNotFoundException;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+import java.time.LocalDateTime;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -23,8 +27,8 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error(HttpStatus.FORBIDDEN.value(), exception.getMessage()));
     }
 
-    @ExceptionHandler(UserNotFound.class)
-    public ResponseEntity<ApiResponse<Void>> handleUserNotFound(UserNotFound exception) {
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ApiResponse<Void>> handleUserNotFound(UserNotFoundException exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(ApiResponse.error(HttpStatus.NOT_FOUND.value(), exception.getMessage()));
     }
@@ -36,15 +40,25 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponse<Void>> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
-        String errors = exception.getBindingResult()
+    public ResponseEntity<Map<String, Object>> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+        List<Map<String, String>> errors = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
-                .map(error -> error.getField() + ": " + error.getDefaultMessage())
-                .collect(Collectors.joining(", "));
+                .map(error -> Map.of(
+                        "field", error.getField(),
+                        "message", error.getDefaultMessage()
+                ))
+                .toList();
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ApiResponse.error(HttpStatus.BAD_REQUEST.value(), errors));
+        Map<String, Object> body = new LinkedHashMap<>();
+
+        body.put("timestamp", LocalDateTime.now().toString());
+        body.put("statusCode", HttpStatus.BAD_REQUEST.value());
+        body.put("success", false);
+        body.put("message", "Validation failed");
+        body.put("errors", errors);
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
     }
 
     @ExceptionHandler(DuplicateDataException.class)

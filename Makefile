@@ -1,71 +1,55 @@
-# ============================
-# Makefile Settings
-# By: Abraão V. S. Santos
-# ============================
 COMPOSE_DIR := compose
-DOCKER_DIR := docker
-COMPOSE_FILE := $(DOCKER_DIR)/$(COMPOSE_DIR)/docker-compose.yml
-ENV_FILE := $(DOCKER_DIR)/$(COMPOSE_DIR)/.env
+COMPOSE_FILE := ./docker/$(COMPOSE_DIR)/docker-compose.yml
+ENV_FILE := .env
+PROJECT_NAME := contacts
 
-# Docker Compose project name (to isolate containers)
-PROJECT_NAME := contacts-rest-api
-
-# ============================
-# Docker Compose Commands
-# ============================
 up:
-	@echo "[!] Starting containers..."
+	@echo "Iniciando containers."
 	docker compose -p $(PROJECT_NAME) --env-file $(ENV_FILE) -f $(COMPOSE_FILE) up -d
 
 down:
-	@echo "[!] Stopping and removing containers..."
+	@echo "Parando e removendo containers."
 	docker compose -p $(PROJECT_NAME) --env-file $(ENV_FILE) -f $(COMPOSE_FILE) down
 
 stop:
-	@echo "[!] Stopping containers (without removing)..."
+	@echo "Parando containers (sem remover)."
 	docker compose -p $(PROJECT_NAME) --env-file $(ENV_FILE) -f $(COMPOSE_FILE) stop
 
 start:
-	@echo "[!] Starting stopped containers..."
+	@echo "Iniciando containers parados."
 	docker compose -p $(PROJECT_NAME) --env-file $(ENV_FILE) -f $(COMPOSE_FILE) start
 
 restart: down up
 
 logs:
-	@echo "[!] Showing service logs..."
+	@echo "Mostrando logs do serviço."
 	docker compose -p $(PROJECT_NAME) --env-file $(ENV_FILE) -f $(COMPOSE_FILE) logs -f
 
 ps:
 	docker compose -p $(PROJECT_NAME) --env-file $(ENV_FILE) -f $(COMPOSE_FILE) ps
 
 build:
-	@echo "[!] Building images..."
+	@echo "Construindo imagens."
 	docker compose -p $(PROJECT_NAME) --env-file $(ENV_FILE) -f $(COMPOSE_FILE) build
 
-# ============================
-# Cleanup
-# ============================
 clean:
-	@echo "[!] Cleaning containers, volumes, and orphan images..."
+	@echo "Limpando containers, volumes e imagens órfãs."
 	docker compose -p $(PROJECT_NAME) --env-file $(ENV_FILE) -f $(COMPOSE_FILE) down -v --remove-orphans
 	docker system prune -f
 
-# ============================
-# Help
-# ============================
 help:
 	@echo ""
-	@echo "-> Available commands:"
-	@echo "  make up        -> Start containers"
-	@echo "  make down      -> Stop and remove containers"
-	@echo "  make stop      -> Stop containers (keep them)"
-	@echo "  make start     -> Start stopped containers"
-	@echo "  make restart   -> Restart containers (down + up)"
-	@echo "  make logs      -> Show real-time logs"
-	@echo "  make ps        -> List active containers"
-	@echo "  make build     -> Build images"
-	@echo "  make clean     -> Remove containers, volumes, and orphan images"
+	@echo "  Comandos disponíveis:"
+	@echo ""
+	@echo "  make up        -> Iniciar containers."
+	@echo "  make down      -> Parar e remover containers."
+	@echo "  make stop      -> Parar containers (mantê-los)."
+	@echo "  make start     -> Iniciar containers parados."
+	@echo "  make restart   -> Reiniciar containers (down + up)."
+	@echo "  make logs      -> Mostrar logs em tempo real."
+	@echo "  make ps        -> Listar containers ativos."
+	@echo "  make build     -> Construir imagens."
+	@echo "  make clean     -> Remover containers, volumes e imagens órfãs."
 	@echo ""
 
-# Default target when running only `make`
 .DEFAULT_GOAL := help

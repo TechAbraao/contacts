@@ -1,4 +1,4 @@
-package org.techabraao.api.contacts.controllers;
+package org.techabraao.api.contacts.integration;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -14,7 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Tag("Integration")
 @SpringBootTest
 @AutoConfigureMockMvc
-public class AuthorizationControllerTest {
+public class AuthorizationEndpointsTest {
 
     @Autowired
     private MockMvc mockMvc;
