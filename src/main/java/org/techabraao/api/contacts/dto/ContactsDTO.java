@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.techabraao.api.contacts.entity.ContactsEntity;
 
+import java.util.UUID;
+
 public record ContactsDTO(
         @NotBlank(message = "Fullname is required.")
         String fullName,
@@ -14,11 +16,4 @@ public record ContactsDTO(
         @Email(message = "Invalid email format.")
         String email
 ) {
-    public ContactsEntity toContactModel() {
-        ContactsEntity contact = new ContactsEntity();
-        contact.setFullName(fullName);
-        contact.setPhone(phone);
-        contact.setEmail(email);
-        return contact;
-    }
 }

@@ -1,4 +1,4 @@
-# API RESTful for Contacts
+# API REST for Contacts
 
 ### Tecnologias
 <section align="left">
@@ -8,8 +8,8 @@
     <img alt="Static Badge" src="https://img.shields.io/badge/Spring%20Validation-grey?style=flat&logo=Spring%20Boot">
     <img alt="Static Badge" src="https://img.shields.io/badge/Spring Security-grey?style=flat&logo=Spring%20Boot"> 
     <img alt="Static Badge" src="https://img.shields.io/badge/Spring%20Data%20JPA-grey?style=flat&logo=Spring%20Boot"> 
-    <br>
     <img alt="Static Badge" src="https://img.shields.io/badge/Docker-grey?style=flat&logo=Docker">
+    <img alt="Static Badge" src="https://img.shields.io/badge/Redis-grey?style=flat&logo=Redis">
     <img alt="Static Badge" src="https://img.shields.io/badge/PostgreSQL-grey?style=flat&logo=PostgreSQL">
     <img alt="Static Badge" src="https://img.shields.io/badge/pgAdmin-grey?style=flat&logo=PostgreSQL">
     <img alt="Static Badge" src="https://img.shields.io/badge/Postman-grey?style=flat&logo=Postman">
@@ -19,29 +19,32 @@
     <img alt="Static Badge" src="https://img.shields.io/badge/Token JWT-grey?style=flat&logo=JSON">
 </section>
 
-#### 🔐 Auth
+### API REST Contract and Definitions
+#### Endpoints
+##### Auth
 
-| Method | URL              | Description                |
-| ------ | ---------------- | -------------------------- |
-| POST   | `/api/auth/signup`  | Register a new user        |
-| POST   | `/api/auth/signin`  | Login and obtain JWT token |
-| POST   | `/api/auth/signout` | Logout (invalidate token)  |
-
-
-#### 👤 User
-
-| Method | URL             | Description                 |
-| ------ | --------------- | --------------------------- |
-| GET    | `/api/users/me` | Get authenticated user data |
+| Method | URL                 | Description                | Authentication |
+| ------ | ------------------- | -------------------------- | -------------- |
+| POST   | `/api/auth/signup`  | Register a new user        | Public         |
+| POST   | `/api/auth/signin`  | Login and obtain JWT token | Public         |
+| POST   | `/api/auth/signout` | Logout (invalidate token)  | JWT Required  |
 
 
-#### 📇 Contacts (Authenticated Users Only)
+##### Users
 
-| Method | URL                          | Description            |
-| ------ | ---------------------------- | ---------------------- |
-| GET    | `/api/contacts`            | List my contacts       |
-| GET    | `/api/contacts/{contactId}`| Get a specific contact |
-| POST   | `/api/contacts`            | Create a new contact   |
-| PUT    | `/api/contacts/{contactId}`| Update a contact       |
-| DELETE | `/api/contacts/{contactId}`| Delete a contact       |
+| Method | URL             | Description                 | Authentication |
+| ------ | --------------- | --------------------------- | -------------- |
+| GET    | `/api/users/me` | Get authenticated user data | JWT Required   |
+| GET    | `/api/users`    | Get all users               | Public         |
+
+##### Contacts
+
+| Method | URL                  | Description            | Authentication |
+| ------ |----------------------| ---------------------- | -------------- |
+| GET    | `/api/contacts`      | List my contacts       | JWT Required   |
+| GET    | `/api/contacts/{id}` | Get a specific contact | JWT Required   |
+| POST   | `/api/contacts`      | Create a new contact   | JWT Required   |
+| PUT    | `/api/contacts/{id}` | Update a contact       | JWT Required   |
+| DELETE | `/api/contacts/{id}` | Delete a contact       | JWT Required   |
+
 

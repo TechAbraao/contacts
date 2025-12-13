@@ -7,15 +7,13 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.techabraao.api.contacts.dto.response.ApiResponse;
-import org.techabraao.api.contacts.exceptions.DuplicateDataException;
+import org.techabraao.api.contacts.exceptions.ContactAlreadyExistsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.techabraao.api.contacts.exceptions.ResourceNotFoundException;
 import org.techabraao.api.contacts.exceptions.UserNotFoundException;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.time.LocalDateTime;
 
 @RestControllerAdvice
@@ -61,10 +59,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
     }
 
-    @ExceptionHandler(DuplicateDataException.class)
-    public ResponseEntity<ApiResponse<Void>> handleDuplicateDataException(DuplicateDataException exception) {
+    @ExceptionHandler(ContactAlreadyExistsException.class)
+    public ResponseEntity<ApiResponse<Void>> handleContactAlreadyExistsException(ContactAlreadyExistsException exception) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(ApiResponse.error(HttpStatus.CONFLICT.value(), exception.getMessage()));
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ApiResponse<Void>> handleResourceNotFoundException(ResourceNotFoundException exception) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ApiResponse.error(HttpStatus.NOT_FOUND.value(), exception.getMessage()));
     }
 
     @ExceptionHandler(Exception.class)
@@ -72,4 +76,5 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.getMessage()));
     }
+
 }

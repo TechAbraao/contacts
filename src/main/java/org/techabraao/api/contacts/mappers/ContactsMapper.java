@@ -2,6 +2,7 @@ package org.techabraao.api.contacts.mappers;
 
 import org.techabraao.api.contacts.dto.ContactsDTO;
 import org.techabraao.api.contacts.dto.request.ContactsRequest;
+import org.techabraao.api.contacts.dto.response.ContactsResponse;
 import org.techabraao.api.contacts.entity.ContactsEntity;
 
 public class ContactsMapper {
@@ -29,6 +30,16 @@ public class ContactsMapper {
                 request.fullname(),
                 request.phone(),
                 request.email()
+        );
+    }
+
+    /* Entity -> Response */
+    public static ContactsResponse toResponse(ContactsEntity entity) {
+        return new ContactsResponse(
+                entity.getId(),
+                entity.getFullName(),
+                entity.getPhone(),
+                entity.getEmail()
         );
     }
 }

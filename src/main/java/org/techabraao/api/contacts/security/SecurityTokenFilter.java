@@ -12,7 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.techabraao.api.contacts.entity.UsersEntity;
-import org.techabraao.api.contacts.repository.UserRepository;
+import org.techabraao.api.contacts.repository.UsersRepository;
 import org.techabraao.api.contacts.services.TokenServices;
 
 import java.io.IOException;
@@ -24,7 +24,7 @@ import java.util.UUID;
 public class SecurityTokenFilter extends OncePerRequestFilter {
 
     private final TokenServices tokenServices;
-    private final UserRepository userRepository;
+    private final UsersRepository userRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.techabraao.api.contacts.dto.SignUpDTO;
 import org.techabraao.api.contacts.dto.request.SignInRequest;
 import org.techabraao.api.contacts.dto.response.ApiResponse;
-import org.techabraao.api.contacts.exceptions.DuplicateDataException;
+import org.techabraao.api.contacts.exceptions.ContactAlreadyExistsException;
 import org.techabraao.api.contacts.entity.UsersEntity;
 import org.techabraao.api.contacts.services.TokenServices;
 import org.techabraao.api.contacts.services.UserServices;
@@ -38,7 +38,7 @@ public class AuthorizationController {
     public ResponseEntity<?> signUp(@RequestBody @Valid SignUpDTO credentials) {
 
         if (userServices.verifyExistsUserByUsername(credentials)) {
-            throw new DuplicateDataException("Email or username already in use.");
+            throw new ContactAlreadyExistsException("Email or username already in use.");
         };
 
         userServices.addUser(credentials);

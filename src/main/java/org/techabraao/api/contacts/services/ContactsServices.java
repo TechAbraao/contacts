@@ -1,18 +1,18 @@
 package org.techabraao.api.contacts.services;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.techabraao.api.contacts.controllers.ContactsController;
 import org.techabraao.api.contacts.dto.ContactsDTO;
+import org.techabraao.api.contacts.dto.response.ContactsResponse;
 import org.techabraao.api.contacts.entity.ContactsEntity;
-import org.techabraao.api.contacts.entity.UsersEntity;
 import org.techabraao.api.contacts.mappers.ContactsMapper;
 import org.techabraao.api.contacts.repository.ContactsRepository;
-import org.techabraao.api.contacts.repository.UserRepository;
+import org.techabraao.api.contacts.repository.UsersRepository;
+import org.techabraao.api.contacts.validators.ContactsValidators;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,36 +20,35 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ContactsServices {
     private final ContactsRepository contactsRepository;
-    private final UserRepository usersRepository;
+    private final UsersRepository usersRepository;
+    private final ContactsValidators contactsValidators;
 
     private final Logger logger = LoggerFactory.getLogger(ContactsServices.class);
 
-    public boolean verifyEmailOrPhoneExists(ContactsDTO contact, UUID userId) {
-        boolean exists = contactsRepository.existsByEmailAndPhoneAndUser_Id(contact.email(), contact.phone(), userId);
-        return exists;
-    }
-
     public ContactsDTO addContact(ContactsDTO dto, UUID userId) {
-
+        contactsValidators.validateContactDoesNotExist(dto, userId);
         var user = usersRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found."));
 
         var entity = ContactsMapper.toEntity(dto);
         entity.setUser(user);
 
-        ContactsDTO contacts = ContactsMapper.toDTO(contactsRepository.save(entity));
-
-        return contacts;
+        return ContactsMapper.toDTO(contactsRepository.save(entity));
     }
 
-    public List<ContactsDTO> allContactsByUserId(UUID userId) {
+    public List<ContactsResponse> allContactsByUserId(UUID userId) {
+
         List<ContactsEntity> contacts =
                 contactsRepository.findAllByUserId(userId);
 
-
         return contacts.stream()
-                .map(ContactsMapper::toDTO)
+                .map(ContactsMapper::toResponse)
                 .toList();
     }
 
+    @Transactional
+    public void deleteContactById(UUID contactId, UUID userId) {
+        ContactsEntity contact = contactsValidators.contactOwnersShip(contactId, userId);
+        contactsRepository.delete(contact);
+    }
 }

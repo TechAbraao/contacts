@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.*;
 import org.techabraao.api.contacts.dto.ContactsDTO;
 import org.techabraao.api.contacts.dto.request.ContactsRequest;
 import org.techabraao.api.contacts.dto.response.ApiResponse;
+import org.techabraao.api.contacts.dto.response.ContactsResponse;
 import org.techabraao.api.contacts.entity.UsersEntity;
-import org.techabraao.api.contacts.exceptions.DuplicateDataException;
-import org.techabraao.api.contacts.entity.ContactsEntity;
 import org.techabraao.api.contacts.mappers.ContactsMapper;
 import org.techabraao.api.contacts.repository.ContactsRepository;
 import org.techabraao.api.contacts.services.ContactsServices;
 import org.slf4j.LoggerFactory;
+import org.techabraao.api.contacts.validators.ContactsValidators;
 
 import java.util.List;
 import java.util.UUID;
@@ -36,38 +36,36 @@ public class ContactsController {
     @PostMapping
     @Operation(summary = "Add a new Contact", description = "This endpoint will add a contact based on the authenticated user")
     public ResponseEntity<?> createContact
-            (@RequestBody @Valid ContactsRequest contactsRequest,
-             @AuthenticationPrincipal UsersEntity me) {
+            (
+                    @RequestBody @Valid ContactsRequest contactsRequest,
+                    @AuthenticationPrincipal UsersEntity me) {
         UUID userId = me.getId();
-        logger.info("Contact request received: fullName - {}, phone - {}, email: {}",
+        logger.info("Contact request received (ContactRequest): fullName - {}, phone - {}, email: {}",
                 contactsRequest.fullname(),
                 contactsRequest.phone(),
                 contactsRequest.email());
 
+        ContactsDTO contactsDTO = ContactsMapper.toDTO(contactsRequest);
+        logger.info("ContactRequest to ContactDTO =>  {}", contactsDTO);
 
-        boolean checkingExists = contactsServices
-                .verifyEmailOrPhoneExists(ContactsMapper
-                        .toDTO(contactsRequest), userId);
-
-        if (checkingExists) {
-            throw new DuplicateDataException("Email and/or phone number are already in the database.");
-        }
-
-        ContactsDTO userAdded = contactsServices.addContact(ContactsMapper
-                        .toDTO(contactsRequest), userId);
+        ContactsDTO userAdded = contactsServices.addContact(contactsDTO, userId);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .build();
+                .body(ApiResponse.success(
+                        HttpStatus.OK.value(),
+                        "Contact added successfully.",
+                        userAdded
+                ));
     }
 
     @GetMapping
-    @Operation(summary = "Get all Contacts by User ID", description = "")
-    public ResponseEntity<?> getAllContactsByUserId(@AuthenticationPrincipal UsersEntity me){
+    @Operation(summary = "Get all Contacts by User ID", description = "....")
+    public ResponseEntity<?> getAllContactsByUserId(@AuthenticationPrincipal UsersEntity me) {
         UUID userId = me.getId();
         logger.info("Authenticated user has User ID equal to: '{}'.", userId);
 
-        List<ContactsDTO> allContacts = contactsServices.allContactsByUserId(userId);
+        List<ContactsResponse> allContacts = contactsServices.allContactsByUserId(userId);
         logger.info("All contacts have been returned. {}", allContacts);
 
         return ResponseEntity
@@ -79,4 +77,17 @@ public class ContactsController {
                 ));
     }
 
+    @DeleteMapping("/{id}")
+    @Operation(summary = "....", description = "....")
+    public ResponseEntity<?> deleteContactsByUserId
+            (
+                    @AuthenticationPrincipal UsersEntity me,
+                    @PathVariable UUID id
+            ) {
+        UUID userId = me.getId();
+        contactsServices.deleteContactById(id, userId);
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .build();
+    }
 }

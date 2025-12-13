@@ -5,15 +5,18 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.techabraao.api.contacts.dto.SignUpDTO;
+import org.techabraao.api.contacts.dto.response.UsersResponse;
 import org.techabraao.api.contacts.entity.UsersEntity;
-import org.techabraao.api.contacts.repository.UserRepository;
+import org.techabraao.api.contacts.mappers.UsersMapper;
+import org.techabraao.api.contacts.repository.UsersRepository;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class UserServices {
-    private final UserRepository repository;
+    private final UsersRepository repository;
     private final PasswordEncoder passwordEncoder;
 
     public Boolean verifyExistsUserByUsername(SignUpDTO user) {
@@ -27,9 +30,15 @@ public class UserServices {
     };
 
     @Transactional(readOnly = true)
-    public UsersEntity searchUserById(UUID uuid) {
-        return repository.findById(uuid)
-                .orElse(null);
+    public UsersResponse searchUserById(UUID uuid) {
+        UsersEntity user = repository.findById(uuid).orElse(null);
+        return UsersMapper.toResponse(user);
     }
 
+    public List<UsersResponse> allUsers() {
+        List<UsersEntity> allUsers = repository.findAll();
+        return allUsers.stream()
+                .map(UsersMapper::toResponse)
+                .toList();
+    }
 }

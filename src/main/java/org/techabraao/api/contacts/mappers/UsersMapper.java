@@ -1,11 +1,15 @@
 package org.techabraao.api.contacts.mappers;
 
+import org.techabraao.api.contacts.dto.response.UsersResponse;
 import org.techabraao.api.contacts.entity.UsersEntity;
 
 public class UsersMapper {
-    // TODO: Implementar os principais métodos do UsersMapper
-    public static UsersEntity toEntity() {
-        UsersEntity user = new UsersEntity();
-        return user;
+    public static UsersResponse toResponse(UsersEntity entity) {
+        return new UsersResponse(
+                entity.getId(),
+                entity.getUsername(),
+                entity.getEmail(),
+                entity.getRoles()
+        );
     }
 }

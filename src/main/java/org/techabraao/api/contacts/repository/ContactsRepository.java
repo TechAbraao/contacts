@@ -16,4 +16,6 @@ public interface ContactsRepository extends JpaRepository<ContactsEntity, UUID> 
     Optional<ContactsEntity> findByEmailAndPhone(String email, Long phone);
 
     List<ContactsEntity> findAllByUserId(UUID userId);
+    Optional<ContactsEntity> findByIdAndUserId(UUID id, UUID userId);
+    void deleteByIdAndUserId(UUID id, UUID userId);
 }
