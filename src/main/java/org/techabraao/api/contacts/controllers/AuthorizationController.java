@@ -26,7 +26,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
-@Tag(name = "Authorization", description = "Operations related to authorization and authentication with Token JWT")
+@Tag(name = "Authorizations", description = "Operations related to authorization and authentication with Token JWT")
 public class AuthorizationController {
 
     private final UserServices userServices;
@@ -35,7 +35,9 @@ public class AuthorizationController {
 
     @PostMapping("/signup")
     @Operation(summary = "Sign Up", description = "Create a new User")
-    public ResponseEntity<?> signUp(@RequestBody @Valid SignUpDTO credentials) {
+    public ResponseEntity<?> signUp(
+            @RequestBody @Valid SignUpDTO credentials
+    ) {
 
         if (userServices.verifyExistsUserByUsername(credentials)) {
             throw new ContactAlreadyExistsException("Email or username already in use.");
@@ -52,7 +54,9 @@ public class AuthorizationController {
 
     @Operation(summary = "Sign In", description = "Login and authenticate user")
     @PostMapping("/signin")
-    public ResponseEntity<?> signIn(@RequestBody @Valid SignInRequest request) throws Exception {
+    public ResponseEntity<?> signIn(
+            @RequestBody @Valid SignInRequest request
+    ) throws Exception {
         var usernamePassword = new UsernamePasswordAuthenticationToken(request.username(), request.password());
 
         try {

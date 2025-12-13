@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.techabraao.api.contacts.dto.response.ApiResponse;
 import org.techabraao.api.contacts.exceptions.ContactAlreadyExistsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.techabraao.api.contacts.exceptions.InvalidUUIDException;
 import org.techabraao.api.contacts.exceptions.ResourceNotFoundException;
 import org.techabraao.api.contacts.exceptions.UserNotFoundException;
 
@@ -69,6 +70,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleResourceNotFoundException(ResourceNotFoundException exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(ApiResponse.error(HttpStatus.NOT_FOUND.value(), exception.getMessage()));
+    }
+
+    @ExceptionHandler(InvalidUUIDException.class)
+    public ResponseEntity<ApiResponse<Void>> handleInvalidUUIDException(InvalidUUIDException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.error(HttpStatus.BAD_REQUEST.value(), exception.getMessage()));
     }
 
     @ExceptionHandler(Exception.class)

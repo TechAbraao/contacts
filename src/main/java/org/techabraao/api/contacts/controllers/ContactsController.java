@@ -15,10 +15,9 @@ import org.techabraao.api.contacts.dto.response.ApiResponse;
 import org.techabraao.api.contacts.dto.response.ContactsResponse;
 import org.techabraao.api.contacts.entity.UsersEntity;
 import org.techabraao.api.contacts.mappers.ContactsMapper;
-import org.techabraao.api.contacts.repository.ContactsRepository;
 import org.techabraao.api.contacts.services.ContactsServices;
 import org.slf4j.LoggerFactory;
-import org.techabraao.api.contacts.validators.ContactsValidators;
+import org.techabraao.api.contacts.validators.FormatsValidators;
 
 import java.util.List;
 import java.util.UUID;
@@ -28,17 +27,16 @@ import java.util.UUID;
 @RequestMapping("/api/contacts")
 @Tag(name = "Contacts", description = "Operations related to contacts")
 public class ContactsController {
-    private final ContactsRepository contactsRepository;
     private final ContactsServices contactsServices;
+    private final FormatsValidators formatsValidators;
 
     private final Logger logger = LoggerFactory.getLogger(ContactsController.class);
 
     @PostMapping
     @Operation(summary = "Add a new Contact", description = "This endpoint will add a contact based on the authenticated user")
-    public ResponseEntity<?> createContact
-            (
-                    @RequestBody @Valid ContactsRequest contactsRequest,
-                    @AuthenticationPrincipal UsersEntity me) {
+    public ResponseEntity<?> createContact(
+            @RequestBody @Valid ContactsRequest contactsRequest, @AuthenticationPrincipal UsersEntity me
+    ) {
         UUID userId = me.getId();
         logger.info("Contact request received (ContactRequest): fullName - {}, phone - {}, email: {}",
                 contactsRequest.fullname(),
@@ -61,12 +59,14 @@ public class ContactsController {
 
     @GetMapping
     @Operation(summary = "Get all Contacts by User ID", description = "....")
-    public ResponseEntity<?> getAllContactsByUserId(@AuthenticationPrincipal UsersEntity me) {
+    public ResponseEntity<?> getAllContactsByUserId(
+            @AuthenticationPrincipal UsersEntity me
+    ) {
         UUID userId = me.getId();
         logger.info("Authenticated user has User ID equal to: '{}'.", userId);
 
         List<ContactsResponse> allContacts = contactsServices.allContactsByUserId(userId);
-        logger.info("All contacts have been returned. {}", allContacts);
+        logger.info("All contacts have been returned. '{}.'", allContacts);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -79,15 +79,42 @@ public class ContactsController {
 
     @DeleteMapping("/{id}")
     @Operation(summary = "....", description = "....")
-    public ResponseEntity<?> deleteContactsByUserId
-            (
-                    @AuthenticationPrincipal UsersEntity me,
-                    @PathVariable UUID id
-            ) {
+    public ResponseEntity<?> deleteContactsByUserId(
+            @AuthenticationPrincipal UsersEntity me, @PathVariable String id
+    ) {
+        UUID contactId = formatsValidators.validateUUID(id);
+        logger.info("UUID successfully validated (String => UUID): '{}'.", contactId);
+
         UUID userId = me.getId();
-        contactsServices.deleteContactById(id, userId);
+        logger.info("Authenticated user has User ID equal to: '{}'.", userId);
+
+        contactsServices.deleteContactById(contactId, userId);
+
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
                 .build();
+    }
+
+    @GetMapping("/{id}")
+    @Operation(summary = "", description = "")
+    public ResponseEntity<?> getContactById(
+            @AuthenticationPrincipal UsersEntity me, @PathVariable String id
+    ) {
+        UUID contactId = formatsValidators.validateUUID(id);
+        logger.info("UUID successfully validated (String => UUID): '{}'.", contactId);
+
+        UUID userId = me.getId();
+        logger.info("Authenticated user has User ID equal to: '{}'.", userId);
+
+        ContactsResponse contact = contactsServices.findById(contactId, userId);
+        logger.info("Contact with id '{}' was successfully returned. Is: '{}'.", contactId, contact);
+
+        return ResponseEntity
+                .ok()
+                .body(ApiResponse.success(
+                        HttpStatus.OK.value(),
+                        "Contact successfully found.",
+                        contact
+                ));
     }
 }

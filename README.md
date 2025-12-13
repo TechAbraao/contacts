@@ -8,6 +8,7 @@
     <img alt="Static Badge" src="https://img.shields.io/badge/Spring%20Validation-grey?style=flat&logo=Spring%20Boot">
     <img alt="Static Badge" src="https://img.shields.io/badge/Spring Security-grey?style=flat&logo=Spring%20Boot"> 
     <img alt="Static Badge" src="https://img.shields.io/badge/Spring%20Data%20JPA-grey?style=flat&logo=Spring%20Boot"> 
+    <img alt="Static Badge" src="https://img.shields.io/badge/JUnit5-grey?style=flat&logo=JUnit5"> 
     <img alt="Static Badge" src="https://img.shields.io/badge/Docker-grey?style=flat&logo=Docker">
     <img alt="Static Badge" src="https://img.shields.io/badge/Redis-grey?style=flat&logo=Redis">
     <img alt="Static Badge" src="https://img.shields.io/badge/PostgreSQL-grey?style=flat&logo=PostgreSQL">
@@ -21,6 +22,7 @@
 
 ### API REST Contract and Definitions
 #### Endpoints
+Check out all the endpoints available in this project.
 ##### Auth
 
 | Method | URL                 | Description                | Authentication |
@@ -47,4 +49,6 @@
 | PUT    | `/api/contacts/{id}` | Update a contact       | JWT Required   |
 | DELETE | `/api/contacts/{id}` | Delete a contact       | JWT Required   |
 
+#### Payloads and Swagger
+Check out the main returned and required payload formats and gain access to the API's Swagger.
 

@@ -22,7 +22,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/users")
-@Tag(name = "Me (Authenticated user)", description = "Operations related to the authenticated user")
+@Tag(name = "Users Informations", description = "Obtain user data and/or your data.")
 public class UsersController {
     private final UserServices userServices;
 
@@ -39,7 +39,7 @@ public class UsersController {
     }
 
     @GetMapping
-    @Operation(summary = "Get All Users", description = "")
+    @Operation(summary = "Get All Users", description = "Get the data list for all users.")
     public ResponseEntity<?> getAllUsers() {
         List<UsersResponse> allUsers = userServices.allUsers();
 

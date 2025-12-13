@@ -27,15 +27,14 @@ public class SecurityTokenFilter extends OncePerRequestFilter {
     private final UsersRepository userRepository;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain) throws
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain) throws
             ServletException,
             IOException {
 
         var token = this.recoverToken(request);
-
-        System.out.println("My Token here: " + token);
 
         if (token != null) {
             var subject = tokenServices.validateToken(token);

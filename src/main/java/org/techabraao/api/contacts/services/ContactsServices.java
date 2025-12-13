@@ -37,10 +37,8 @@ public class ContactsServices {
     }
 
     public List<ContactsResponse> allContactsByUserId(UUID userId) {
-
         List<ContactsEntity> contacts =
                 contactsRepository.findAllByUserId(userId);
-
         return contacts.stream()
                 .map(ContactsMapper::toResponse)
                 .toList();
@@ -48,7 +46,14 @@ public class ContactsServices {
 
     @Transactional
     public void deleteContactById(UUID contactId, UUID userId) {
+        // * Regra de Negócio: Um usuário só pode deletar os próprios contatos. * //
         ContactsEntity contact = contactsValidators.contactOwnersShip(contactId, userId);
         contactsRepository.delete(contact);
     }
+
+    public ContactsResponse findById(UUID contactId, UUID userId) {
+        // * Regra de Negócio: Um usuário só pode consultar seus próprios contatos. * //
+        ContactsEntity contact = contactsValidators.contactOwnersShip(contactId, userId);
+        return  ContactsMapper.toResponse(contact);
+    };
 }
