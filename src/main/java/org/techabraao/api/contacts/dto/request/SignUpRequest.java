@@ -1,11 +1,17 @@
 package org.techabraao.api.contacts.dto.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import org.techabraao.api.contacts.enums.Roles;
 
 public record SignUpRequest(
         @NotBlank(message = "Username is required.")
         @Pattern(regexp = "^[A-Za-z]+$", message = "Characters containing accents and spaces are invalid.")
+        @Schema(
+                defaultValue = " ",
+                example = " ",
+                description = "Your username"
+        )
         String username,
 
         @NotBlank(message = "Email is required.")

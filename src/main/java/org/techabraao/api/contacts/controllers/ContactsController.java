@@ -1,9 +1,12 @@
 package org.techabraao.api.contacts.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Null;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.jdbc.Expectation;
 import org.slf4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +17,7 @@ import org.techabraao.api.contacts.dto.request.ContactsRequest;
 import org.techabraao.api.contacts.dto.response.ApiResponse;
 import org.techabraao.api.contacts.dto.response.ContactsResponse;
 import org.techabraao.api.contacts.entity.UsersEntity;
+import org.techabraao.api.contacts.enums.Roles;
 import org.techabraao.api.contacts.mappers.ContactsMapper;
 import org.techabraao.api.contacts.services.ContactsServices;
 import org.slf4j.LoggerFactory;
@@ -33,7 +37,11 @@ public class ContactsController {
     private final Logger logger = LoggerFactory.getLogger(ContactsController.class);
 
     @PostMapping
-    @Operation(summary = "Add a new Contact", description = "This endpoint will add a contact based on the authenticated user")
+    @Operation(
+            summary = "Add a new Contact",
+            description = "This endpoint will add a contact based on the authenticated user",
+            security = {@SecurityRequirement(name = "bearerAuth"), @SecurityRequirement(name = "basicAuth")}
+    )
     public ResponseEntity<?> createContact(
             @RequestBody @Valid ContactsRequest contactsRequest, @AuthenticationPrincipal UsersEntity me
     ) {
@@ -51,68 +59,85 @@ public class ContactsController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(ApiResponse.success(
-                        HttpStatus.OK.value(),
                         "Contact added successfully.",
                         userAdded
                 ));
     }
 
     @GetMapping
-    @Operation(summary = "Get all Contacts by User ID", description = "....")
+    @Operation(
+            summary = "Get all Contacts by User ID",
+            description = "",
+            security = {@SecurityRequirement(name = "bearerAuth"), @SecurityRequirement(name = "basicAuth")}
+    )
     public ResponseEntity<?> getAllContactsByUserId(
             @AuthenticationPrincipal UsersEntity me
     ) {
         UUID userId = me.getId();
+        Roles userRole = me.getRoles();
+        List<ContactsResponse> allContacts;
+
         logger.info("Authenticated user has User ID equal to: '{}'.", userId);
 
-        List<ContactsResponse> allContacts = contactsServices.allContactsByUserId(userId);
-        logger.info("All contacts have been returned. '{}.'", allContacts);
+        if (userRole.equals(Roles.ADMIN)) {
+            logger.info("Searching all contacts through the administrator user. Your role is: {}", userRole);
+            allContacts = contactsServices.allContacts();
+        } else {
+            logger.info("Searching all contacts through the basic user. Your role is: {} ", userRole);
+            allContacts = contactsServices.allContactsByUserId(userId);
+        }
 
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ApiResponse.success(
-                        HttpStatus.OK.value(),
                         "All contacts were successfully found.",
                         allContacts
                 ));
     }
 
-    @DeleteMapping("/{id}")
-    @Operation(summary = "....", description = "....")
+    @DeleteMapping("/{contactId}")
+    @Operation(
+            summary = "....",
+            description = "....",
+            security = {@SecurityRequirement(name = "bearerAuth"), @SecurityRequirement(name = "basicAuth")}
+    )
     public ResponseEntity<?> deleteContactsByUserId(
-            @AuthenticationPrincipal UsersEntity me, @PathVariable String id
+            @AuthenticationPrincipal UsersEntity me, @PathVariable String contactId
     ) {
-        UUID contactId = formatsValidators.validateUUID(id);
+        UUID idContact = formatsValidators.validateUUID(contactId);
         logger.info("UUID successfully validated (String => UUID): '{}'.", contactId);
 
         UUID userId = me.getId();
         logger.info("Authenticated user has User ID equal to: '{}'.", userId);
 
-        contactsServices.deleteContactById(contactId, userId);
+        contactsServices.deleteContactById(idContact, userId);
 
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
                 .build();
     }
 
-    @GetMapping("/{id}")
-    @Operation(summary = "", description = "")
+    @GetMapping("/{contactId}")
+    @Operation(
+            summary = "",
+            description = "",
+            security = {@SecurityRequirement(name = "bearerAuth"), @SecurityRequirement(name = "basicAuth")}
+    )
     public ResponseEntity<?> getContactById(
-            @AuthenticationPrincipal UsersEntity me, @PathVariable String id
+            @AuthenticationPrincipal UsersEntity me, @PathVariable String contactId
     ) {
-        UUID contactId = formatsValidators.validateUUID(id);
+        UUID idContact = formatsValidators.validateUUID(contactId);
         logger.info("UUID successfully validated (String => UUID): '{}'.", contactId);
 
         UUID userId = me.getId();
         logger.info("Authenticated user has User ID equal to: '{}'.", userId);
 
-        ContactsResponse contact = contactsServices.findById(contactId, userId);
+        ContactsResponse contact = contactsServices.findById(idContact, userId);
         logger.info("Contact with id '{}' was successfully returned. Is: '{}'.", contactId, contact);
 
         return ResponseEntity
                 .ok()
                 .body(ApiResponse.success(
-                        HttpStatus.OK.value(),
                         "Contact successfully found.",
                         contact
                 ));

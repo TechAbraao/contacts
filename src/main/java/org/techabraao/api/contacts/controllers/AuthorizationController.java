@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.techabraao.api.contacts.dto.SignUpDTO;
 import org.techabraao.api.contacts.dto.request.SignInRequest;
+import org.techabraao.api.contacts.dto.request.SignUpRequest;
 import org.techabraao.api.contacts.dto.response.ApiResponse;
 import org.techabraao.api.contacts.exceptions.ContactAlreadyExistsException;
 import org.techabraao.api.contacts.entity.UsersEntity;
@@ -36,7 +37,7 @@ public class AuthorizationController {
     @PostMapping("/signup")
     @Operation(summary = "Sign Up", description = "Create a new User")
     public ResponseEntity<?> signUp(
-            @RequestBody @Valid SignUpDTO credentials
+            @RequestBody @Valid SignUpRequest credentials
     ) {
 
         if (userServices.verifyExistsUserByUsername(credentials)) {
@@ -46,7 +47,6 @@ public class AuthorizationController {
         userServices.addUser(credentials);
         return ResponseEntity.status(HttpStatus.CREATED.value())
                 .body(ApiResponse.success(
-                        HttpStatus.CREATED.value(),
                         "User created successfully.",
                         null
                 ));
@@ -65,9 +65,7 @@ public class AuthorizationController {
 
             Map<String, Object> body = Map.of(
                     "timestamp", LocalDateTime.now().toString(),
-                    "statusCode", HttpStatus.OK.value(),
-                    "success", true,
-                    "access_token", token
+                    "accessToken", token
             );
             return ResponseEntity.status(HttpStatus.OK).body(body);
 
@@ -75,9 +73,8 @@ public class AuthorizationController {
             throw new UsernameNotFoundException("Username not found.");
         } catch (BadCredentialsException exception) {
             return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
+                    .status(HttpStatus.BAD_REQUEST)
                     .body(ApiResponse.error(
-                            HttpStatus.NOT_FOUND.value(),
                             "Invalid credentials. Please try using different credentials."
                     ));
         }

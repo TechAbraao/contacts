@@ -1,19 +1,32 @@
 package org.techabraao.api.contacts.configs;
 
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@SecurityScheme(
+        name = "bearerAuth",
+        type = SecuritySchemeType.HTTP,
+        scheme = "bearer",
+        bearerFormat = "JWT"
+)
+@SecurityScheme(
+        name = "basicAuth",
+        type = SecuritySchemeType.HTTP,
+        scheme = "basic"
+)
 public class SwaggerConfig {
 
     @Bean
     public OpenAPI customSwagger() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("Contacts API REST")
-                        .version("1.0")
-                        .description("REST API for contact management and JWT authentication"));
+                        .title("RESTful API for contact management.")
+                        .version("1.0.0")
+                        .description("RESTful API for contact management and JWT authentication"));
     }
 }

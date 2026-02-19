@@ -44,6 +44,13 @@ public class ContactsServices {
                 .toList();
     }
 
+    public List<ContactsResponse> allContacts() {
+        List<ContactsEntity> contacts = contactsRepository.findAll();
+        return contacts.stream()
+                .map(ContactsMapper::toResponse)
+                .toList();
+    }
+
     @Transactional
     public void deleteContactById(UUID contactId, UUID userId) {
         // * Regra de Negócio: Um usuário só pode deletar os próprios contatos. * //

@@ -23,6 +23,7 @@ public class TokenServices {
                     .withSubject(String.valueOf(user.getId()))
                     .withExpiresAt(generateExpirationDate())
                     .withJWTId(UUID.randomUUID().toString())
+                    .withClaim("roles", user.getRoles().name())
                     .sign(algorithm);
             return token;
         } catch (JWTCreationException error) {

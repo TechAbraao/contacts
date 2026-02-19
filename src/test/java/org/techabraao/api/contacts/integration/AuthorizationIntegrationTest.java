@@ -13,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.techabraao.api.contacts.dto.SignInDTO;
 import org.techabraao.api.contacts.dto.SignUpDTO;
 import org.techabraao.api.contacts.enums.Roles;
 import org.techabraao.api.contacts.repository.UsersRepository;
@@ -56,8 +57,16 @@ public class AuthorizationIntegrationTest {
         );
     }
 
+    private ResultActions performPostSignIn(SignInDTO payloadCredentials) throws Exception {
+        return mockMvc.perform(
+                post("/api/auth/signin")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(payloadCredentials))
+        );
+    }
+
     @Test
-    void testSignUpEndpointSuccess() throws Exception {
+    void shouldRegisterUserSuccessfully() throws Exception {
 
         SignUpDTO payloadCredentials = new SignUpDTO(
                 "BruceWayne",
@@ -97,6 +106,7 @@ public class AuthorizationIntegrationTest {
 
     @Test
     void testSignUpEndpointWithDuplicateCredentials() throws Exception {
+
         SignUpDTO payloadCredentials = new SignUpDTO(
                 "BruceWayne",
                 "bruce.wayne@hotmail.com",
@@ -113,6 +123,56 @@ public class AuthorizationIntegrationTest {
         responseConflit
                 .andExpect(jsonPath("$.message").value("Email or username already in use."))
                 .andExpect(jsonPath("$.statusCode").value(HttpStatus.CONFLICT.value()));
+    }
 
+    @Test
+    void testSignInEndpointSuccess() throws Exception {
+        SignUpDTO payloadCredentials = new SignUpDTO(
+                "BruceWayne",
+                "bruce.wayne@hotmail.com",
+                Roles.USER,
+                "BruceWaynePass"
+        );
+
+        ResultActions responseSignUp = performPostSignUp(payloadCredentials)
+                .andExpect(status().isCreated());
+
+
+        SignInDTO payloadSignIn = new SignInDTO(
+                payloadCredentials.username(),
+                payloadCredentials.password()
+        );
+
+        ResultActions responseSignIn = performPostSignIn(payloadSignIn)
+                .andExpect(status().isOk());
+
+        responseSignIn.andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.statusCode").value(HttpStatus.OK.value()))
+                .andExpect(jsonPath("$.access_token").isNotEmpty());
+    }
+
+    @Test
+    void testSignInWithInvalidCredentials() throws Exception {
+        SignUpDTO payloadCredentials = new SignUpDTO(
+                "ClarkKent",
+                "clark.kent@hotmail.com",
+                Roles.USER,
+                "CorrectPass"
+        );
+
+        performPostSignUp(payloadCredentials)
+                .andExpect(status().isCreated());
+
+        SignInDTO invalidSignIn = new SignInDTO(
+                payloadCredentials.username(),
+                "WrongPassword"
+        );
+
+        performPostSignIn(invalidSignIn)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.message").value("Invalid credentials. Please try using different credentials."))
+                .andExpect(jsonPath("$.statusCode").value(HttpStatus.BAD_REQUEST.value()))
+                .andExpect(jsonPath("$.access_token").doesNotExist());
     }
 }
