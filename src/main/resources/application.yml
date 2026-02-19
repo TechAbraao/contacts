@@ -12,7 +12,6 @@ spring:
       name: admin
       password: admin
 
-
   datasource:
     url: jdbc:postgresql://localhost:5432/contactsDatabase
     username: postgres

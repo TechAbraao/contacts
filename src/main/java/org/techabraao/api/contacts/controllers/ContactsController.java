@@ -78,7 +78,6 @@ public class ContactsController {
         List<ContactsResponse> allContacts;
 
         logger.info("Authenticated user has User ID equal to: '{}'.", userId);
-
         if (userRole.equals(Roles.ADMIN)) {
             logger.info("Searching all contacts through the administrator user. Your role is: {}", userRole);
             allContacts = contactsServices.allContacts();

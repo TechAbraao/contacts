@@ -20,6 +20,93 @@
     <img alt="Static Badge" src="https://img.shields.io/badge/Token JWT-grey?style=flat&logo=JSON">
 </section>
 
+### How to Start
+#### Pre-requisites
+- Java (21)
+- Apache Maven (3.8.7+)
+- Docker
+- PostgreSQL
+- Makefile (optional)
+
+#### Running with Docker (recommended)
+#### 1. Clone the repository
+Clone and access the directory
+```bash
+git@github.com:TechAbraao/contacts.git
+cd ./contacts
+```
+
+#### 2. Configure the environment variables.
+Change the `.env.example` file to `.env`. For example:
+````bash
+cp .env.example .env
+````
+Now configure the necessary variables for the Docker container (minimal example):
+```bash
+## POSTGRESQL ##
+POSTGRES_CONTAINER_NAME=contacts_postgres
+POSTGRES_PORT=5432
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=secret
+POSTGRES_DB=contacts_db
+
+## PGADMIN ##
+PGADMIN_CONTAINER_NAME=contacts_pgadmin
+PGADMIN_PORT=8081
+PGADMIN_EMAIL=admin@example.com
+PGADMIN_PASSWORD=secret
+```
+
+#### 3. Configure the application.yml file.
+The application is pre-configured to use environment variables. Below is the recommended configuration for your src/main/resources/application.yml (minimal example):
+```yml
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/contacts_db
+    username: postgres
+    password: secret
+    driver-class-name: org.postgresql.Driver
+
+  security:
+    user:
+      email: admin@example.com
+      name: admin
+      password: secret
+```
+
+#### 4. Initialize the containers
+If you have the Makefile (Linux/Unix system):
+```bash
+make start
+```
+If not, do it manually:
+```bash
+docker compose \
+  --env-file .env \
+  -f docker/compose/docker-compose.yml \
+  up -d
+```
+
+#### 5. Run the application
+```bash
+mvn clean install
+mvn spring-boot:run
+```
+
+#### 6. Availability
+The API will be available at
+```bash
+http://localhost:8000/api/
+```
+API Swagger
+Check out the main returned and required payload formats and gain access to the API's Swagger.
+```bash
+http://localhost:8000/swagger-ui/index.html
+```
+
 ### API RESTful Definitions
 #### Endpoints
 Check out all the endpoints available in this project.
@@ -34,12 +121,12 @@ Check out all the endpoints available in this project.
 
 ##### Users
 
-| Method | URL                   | Description                 | Authentication          |
-|--------|-----------------------|-----------------------------|-------------------------|
-| GET    | `/api/users/me`       | Get authenticated user data | basicAuth               |
-| GET    | `/api/users`          | Get all Users               | basicAuth               |
-| GET    | `/api/users/{userId}` | Get User by ID              | basicAuth               |
-| POST   | `/api/users`          | Create a User               | basicAuth               |
+| Method | URL                   | Description                 | Authentication         |
+|--------|-----------------------|-----------------------------|------------------------|
+| GET    | `/api/users/me`       | Get authenticated user data | basicAuth              |
+| GET    | `/api/users`          | Get all Users               | basicAuth              |
+| POST   | `/api/users`          | Create a User               | basicAuth              |
+| GET    | `/api/users/{userId}` | Get User by ID              | basicAuth              |
 | DELETE | `/api/users/{userId}` | Delete User by ID           | basicAuth or bearerAuth |
 
 ##### Contacts
@@ -47,14 +134,7 @@ Check out all the endpoints available in this project.
 | Method | URL                         | Description            | Authentication          |
 |--------|-----------------------------|------------------------|-------------------------|
 | GET    | `/api/contacts`             | List my contacts       | basicAuth or bearerAuth |
-| GET    | `/api/contacts/{contactId}` | Get a specific contact | basicAuth or bearerAuth |
 | POST   | `/api/contacts`             | Create a new contact   | basicAuth or bearerAuth |
+| GET    | `/api/contacts/{contactId}` | Get a specific contact | basicAuth or bearerAuth |
 | PUT    | `/api/contacts/{contactId}` | Update a contact       | basicAuth or bearerAuth |
 | DELETE | `/api/contacts/{contactId}` | Delete a contact       | basicAuth or bearerAuth |
-
-#### API Swagger
-Check out the main returned and required payload formats and gain access to the API's Swagger.
-
-```bash
-http://localhost:<port>/swagger-ui/index.html
-```
