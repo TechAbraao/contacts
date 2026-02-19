@@ -25,17 +25,14 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/users")
-@Tag(name = "Users", description = "Obtain user data and/or your data.")
+@Tag(name = "Users", description = "User-related operations.")
 public class UsersController {
     private final UserServices userServices;
     private final PasswordEncoder passwordEncoder;
 
     @GetMapping("/me")
-    @Operation(
-            summary = "Get User Infos",
-            description = "Get information from the authenticated user",
-            security = {@SecurityRequirement(name = "bearerAuth")}
-    )
+    @Operation(summary = "Get User Infos.", description = "Get information from the authenticated user.",
+            security = {@SecurityRequirement(name = "bearerAuth"), @SecurityRequirement(name = "basicAuth")})
     public ResponseEntity<?> getInfosAboutMe(@AuthenticationPrincipal UsersEntity user) {
         UUID userId = user.getId();
 
@@ -47,11 +44,8 @@ public class UsersController {
     }
 
     @GetMapping
-    @Operation(
-            summary = "Get All Users",
-            description = "Get the data list for all users.",
-            security = {@SecurityRequirement(name = "basicAuth")}
-    )
+    @Operation(summary = "Get All Users.", description = "Get the data list for all users.",
+            security = {@SecurityRequirement(name = "basicAuth")})
     public ResponseEntity<?> getAllUsers() {
         List<UsersResponse> allUsers = userServices.allUsers();
 
@@ -64,8 +58,8 @@ public class UsersController {
 
     @GetMapping("/{userId}")
     @Operation(
-            summary = "Get User By ID",
-            description = "",
+            summary = "Get User By ID.",
+            description = "Get user information using their ID.",
             security = {@SecurityRequirement(name = "basicAuth")}
     )
     public ResponseEntity<?> getUserById(
@@ -83,8 +77,8 @@ public class UsersController {
 
     @PostMapping
     @Operation(
-            summary = "Create User",
-            description = "",
+            summary = "Create User.",
+            description = "Create a new user.",
             security = {@SecurityRequirement(name = "basicAuth")}
     )
     public ResponseEntity<?> createUser(
@@ -98,8 +92,8 @@ public class UsersController {
 
     @DeleteMapping("/{userId}")
     @Operation(
-            summary = "Delete User",
-            description = "",
+            summary = "Delete User By ID.",
+            description = "Delete a user by ID.",
             security = {@SecurityRequirement(name = "basicAuth")}
     )
     public ResponseEntity<?> deleteUser(
@@ -116,8 +110,8 @@ public class UsersController {
 
     @PutMapping("/{userId}")
     @Operation(
-            summary = "Change User By ID",
-            description = "",
+            summary = "Change User By ID.",
+            description = "Change user information using their ID.",
             security = {@SecurityRequirement(name = "basicAuth")}
     )
     public ResponseEntity<?> changeUserById(

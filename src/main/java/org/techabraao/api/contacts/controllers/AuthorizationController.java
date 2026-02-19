@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -65,7 +66,9 @@ public class AuthorizationController {
 
             Map<String, Object> body = Map.of(
                     "timestamp", LocalDateTime.now().toString(),
-                    "accessToken", token
+                    "accessToken", token,
+                    "refreshToken", "N/A",
+                    "type", "Bearer"
             );
             return ResponseEntity.status(HttpStatus.OK).body(body);
 
@@ -78,5 +81,17 @@ public class AuthorizationController {
                             "Invalid credentials. Please try using different credentials."
                     ));
         }
+    }
+
+    @Operation(summary = "Sign Out", description = "")
+    @PostMapping("/signout")
+    public ResponseEntity<?> signOut() {
+        return  ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @Operation(summary = "Refresh Token", description = "")
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refreshToken() {
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

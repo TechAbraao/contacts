@@ -1,6 +1,11 @@
 server:
   port: 8000
 
+springdoc:
+  swagger-ui:
+    operationsSorter: alpha
+    tagsSorter: alpha
+
 spring:
   application:
     name: RESTful API Contacts

@@ -95,6 +95,10 @@ docker compose \
 mvn clean install
 mvn spring-boot:run
 ```
+If you want to run the tests:
+```bash
+mvn test
+```
 
 #### 6. Availability
 The API will be available at
@@ -112,29 +116,30 @@ http://localhost:8000/swagger-ui/index.html
 Check out all the endpoints available in this project.
 ##### Authorizations
 
-| Method | URL                 | Description                | Authentication          |
-| ------ | ------------------- | -------------------------- |-------------------------|
-| POST   | `/api/auth/signup`  | Register a new user        | public                  |
-| POST   | `/api/auth/signin`  | Login and obtain JWT token | public                  |
-| POST   | `/api/auth/signout` | Logout (invalidate token)  | basicAuth or bearerAuth |
-
+| Method | URL                 | Description   | Authentication |
+|--------|---------------------|---------------|----------------|
+| POST   | `/api/auth/signup`  | Sign Up       | public         |
+| POST   | `/api/auth/signin`  | Sign In       | public         |
+| POST   | `/api/auth/signout` | Sign Out      | bearerAuth     |
+| POST   | `/api/auth/refresh` | Refresh Token | bearerAuth     |
 
 ##### Users
 
-| Method | URL                   | Description                 | Authentication         |
-|--------|-----------------------|-----------------------------|------------------------|
-| GET    | `/api/users/me`       | Get authenticated user data | basicAuth              |
-| GET    | `/api/users`          | Get all Users               | basicAuth              |
-| POST   | `/api/users`          | Create a User               | basicAuth              |
-| GET    | `/api/users/{userId}` | Get User by ID              | basicAuth              |
-| DELETE | `/api/users/{userId}` | Delete User by ID           | basicAuth or bearerAuth |
+| Method | URL                   | Description      | Authentication          |
+|--------|-----------------------|------------------|-------------------------|
+| GET    | `/api/users`          | Get All Users    | basicAuth               |
+| POST   | `/api/users`          | Create User      | basicAuth               |
+| GET    | `/api/users/me`       | Get User Infos   | basicAuth or bearerAuth |
+| GET    | `/api/users/{userId}` | Get User By ID   | basicAuth               |
+| DELETE | `/api/users/{userId}` | Delete User By ID | basicAuth               |
+| PUT    | `/api/users/{userId}` | Change User By ID | basicAuth               |
 
 ##### Contacts
 
-| Method | URL                         | Description            | Authentication          |
-|--------|-----------------------------|------------------------|-------------------------|
-| GET    | `/api/contacts`             | List my contacts       | basicAuth or bearerAuth |
-| POST   | `/api/contacts`             | Create a new contact   | basicAuth or bearerAuth |
-| GET    | `/api/contacts/{contactId}` | Get a specific contact | basicAuth or bearerAuth |
-| PUT    | `/api/contacts/{contactId}` | Update a contact       | basicAuth or bearerAuth |
-| DELETE | `/api/contacts/{contactId}` | Delete a contact       | basicAuth or bearerAuth |
+| Method | URL                         | Description          | Authentication          |
+|--------|-----------------------------|----------------------|-------------------------|
+| GET    | `/api/contacts`             | Get All Contacts     | basicAuth or bearerAuth |
+| POST   | `/api/contacts`             | Add Contact          | basicAuth or bearerAuth |
+| GET    | `/api/contacts/{contactId}` | Contact By ID        | basicAuth or bearerAuth |
+| PUT    | `/api/contacts/{contactId}` | Change Contact by ID | basicAuth or bearerAuth |
+| DELETE | `/api/contacts/{contactId}` | Delete Contact By ID | basicAuth or bearerAuth |

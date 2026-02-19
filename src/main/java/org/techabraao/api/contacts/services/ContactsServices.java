@@ -5,9 +5,13 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.techabraao.api.contacts.dto.ContactsDTO;
+import org.techabraao.api.contacts.dto.request.UpdateContactRequest;
 import org.techabraao.api.contacts.dto.response.ContactsResponse;
 import org.techabraao.api.contacts.entity.ContactsEntity;
+import org.techabraao.api.contacts.enums.Roles;
+import org.techabraao.api.contacts.exceptions.ContactNotFoundException;
 import org.techabraao.api.contacts.mappers.ContactsMapper;
 import org.techabraao.api.contacts.repository.ContactsRepository;
 import org.techabraao.api.contacts.repository.UsersRepository;
@@ -52,10 +56,40 @@ public class ContactsServices {
     }
 
     @Transactional
+    public ContactsResponse updateContactByUserId(UUID contactId, UpdateContactRequest request, UUID userId) {
+
+        // * Regra de Negócio: Um usuário só pode alterar seus próprios contatos * //
+        var contactChanged = contactsValidators.contactOwnersShip(contactId, userId);
+        if (request.fullname() != null) {
+            contactChanged.setFullName(request.fullname());
+        }
+
+        if (request.phone() != null) {
+            contactChanged.setPhone(request.phone());
+        }
+
+        if (request.email() != null) {
+            contactChanged.setEmail(request.email());
+        }
+
+        return ContactsMapper.toResponse(contactChanged);
+    }
+
+    @Transactional
     public void deleteContactById(UUID contactId, UUID userId) {
         // * Regra de Negócio: Um usuário só pode deletar os próprios contatos. * //
         ContactsEntity contact = contactsValidators.contactOwnersShip(contactId, userId);
         contactsRepository.delete(contact);
+    }
+
+    @Transactional
+    public void deleteContact(UUID contactId) {
+        var contactExists = contactsRepository.existsById(contactId);
+        if (contactExists) {
+            contactsRepository.deleteById(contactId);
+        } else {
+            throw new ContactNotFoundException("Contact with id: " + contactId + " does not exist.");
+        }
     }
 
     public ContactsResponse findById(UUID contactId, UUID userId) {

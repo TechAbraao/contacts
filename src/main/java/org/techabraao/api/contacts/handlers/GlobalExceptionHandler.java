@@ -93,4 +93,10 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(ApiResponse.error(exception.getMessage()));
     }
+
+    @ExceptionHandler(ContactNotFoundException.class)
+    public ResponseEntity<ApiResponse<Void>> handleContactNotFoundException(ContactNotFoundException exception) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ApiResponse.error(exception.getMessage()));
+    }
 }

@@ -2,6 +2,7 @@ package org.techabraao.api.contacts.mappers;
 
 import org.techabraao.api.contacts.dto.ContactsDTO;
 import org.techabraao.api.contacts.dto.request.ContactsRequest;
+import org.techabraao.api.contacts.dto.request.UpdateContactRequest;
 import org.techabraao.api.contacts.dto.response.ContactsResponse;
 import org.techabraao.api.contacts.entity.ContactsEntity;
 
@@ -12,6 +13,15 @@ public class ContactsMapper {
         entity.setFullName(contactDTO.fullName());
         entity.setPhone(contactDTO.phone());
         entity.setEmail(contactDTO.email());
+        return entity;
+    }
+
+    /* UpdateContactRequest -> Entity */
+    public static ContactsEntity toEntity(UpdateContactRequest contact) {
+        ContactsEntity entity = new ContactsEntity();
+        entity.setFullName(contact.fullname());
+        entity.setPhone(contact.phone());
+        entity.setEmail(contact.email());
         return entity;
     }
 
