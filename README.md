@@ -58,7 +58,7 @@ PGADMIN_PASSWORD=secret
 ```
 
 #### 3. Configure the application.yml file.
-The application is pre-configured to use environment variables. Below is the recommended configuration for your src/main/resources/application.yml (minimal example):
+The application is pre-configured to use environment variables. Below is the recommended configuration for your `src/main/resources/application.yml` (minimal example):
 ```yml
 server:
   port: 8080
@@ -97,12 +97,12 @@ mvn spring-boot:run
 ```
 
 #### 6. Availability
-The API will be available at
+The API will be available at:
 ```bash
 http://localhost:8000/api/
 ```
 API Swagger
-Check out the main returned and required payload formats and gain access to the API's Swagger.
+Swagger available in:
 ```bash
 http://localhost:8000/swagger-ui/index.html
 ```
