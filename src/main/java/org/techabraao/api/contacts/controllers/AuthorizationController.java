@@ -23,6 +23,7 @@ import org.techabraao.api.contacts.services.UserServices;
 
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.UUID;
 
 
 @RestController
@@ -62,12 +63,17 @@ public class AuthorizationController {
 
         try {
             var auth = this.authenticationManager.authenticate(usernamePassword);
-            var token = tokenServices.generateToken((UsersEntity) auth.getPrincipal());
+            var token = tokenServices.generateAccessToken((UsersEntity) auth.getPrincipal());
+            var refreshToken = tokenServices.generateRefreshToken((UsersEntity) auth.getPrincipal());
+
+            UUID userId = ((UsersEntity) auth.getPrincipal()).getId();
+
+            var addRefreshToken = tokenServices.addRefreshToken(refreshToken, userId);
 
             Map<String, Object> body = Map.of(
                     "timestamp", LocalDateTime.now().toString(),
                     "accessToken", token,
-                    "refreshToken", "N/A",
+                    "refreshToken", refreshToken,
                     "type", "Bearer"
             );
             return ResponseEntity.status(HttpStatus.OK).body(body);
