@@ -30,4 +30,13 @@ public class RefreshTokensEntity {
 
     @Column(name = "expiresAt", nullable = false)
     private Instant expiresAt;
+
+    @Column(name = "device", nullable = true)
+    private String device;
+
+    @Column(name = "ipAddress", nullable = true)
+    private String ipAddress;
+
+    @Column(name = "userAgent", nullable = true)
+    private String userAgent;
 }

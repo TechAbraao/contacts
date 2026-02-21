@@ -71,10 +71,12 @@ spring:
     driver-class-name: org.postgresql.Driver
 
   security:
+    jwt:
+      secret: secret
     user:
-      email: admin@example.com
+      email: admin@admin.com
       name: admin
-      password: secret
+      password: admin
 ```
 
 #### 4. Initialize the containers

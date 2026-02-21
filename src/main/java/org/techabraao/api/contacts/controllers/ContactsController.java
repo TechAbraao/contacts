@@ -100,7 +100,10 @@ public class ContactsController {
     @Operation(
             summary = "Delete Contact by ID.",
             description = "Delete contact using authenticated user ID.",
-            security = {@SecurityRequirement(name = "bearerAuth"), @SecurityRequirement(name = "basicAuth")}
+            security = {
+                    @SecurityRequirement(name = "bearerAuth"),
+                    @SecurityRequirement(name = "basicAuth")
+            }
     )
     public ResponseEntity<?> deleteContactsByUserId(
             @AuthenticationPrincipal UsersEntity me, @PathVariable String contactId
