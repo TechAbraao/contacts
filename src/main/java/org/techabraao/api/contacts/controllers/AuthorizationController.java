@@ -14,6 +14,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
+import org.techabraao.api.contacts.docs.AuthorizationsDocs;
 import org.techabraao.api.contacts.dto.request.SignInRequest;
 import org.techabraao.api.contacts.dto.request.SignUpRequest;
 import org.techabraao.api.contacts.dto.response.ApiResponse;
@@ -29,12 +30,11 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
 
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
 @Tag(name = "Authorizations", description = "Operations related to authorization and authentication with Token JWT")
-public class AuthorizationController {
+public class AuthorizationController implements AuthorizationsDocs {
 
     private final UserServices userServices;
     private final AuthenticationManager authenticationManager;
@@ -52,7 +52,6 @@ public class AuthorizationController {
     }
 
     @PostMapping("/signup")
-    @Operation(summary = "Sign Up.", description = "Create a new User")
     public ResponseEntity<?> signUp(
             @RequestBody @Valid SignUpRequest credentials
     ) {
@@ -69,11 +68,9 @@ public class AuthorizationController {
                 ));
     };
 
-    @Operation(summary = "Sign In.", description = "Login and authenticate user")
     @PostMapping("/signin")
     public ResponseEntity<?> signIn(
-            @RequestBody @Valid SignInRequest request,
-            HttpServletRequest servletRequest
+            @RequestBody @Valid SignInRequest request, HttpServletRequest servletRequest
     ) throws Exception {
         var usernamePassword = new UsernamePasswordAuthenticationToken(request.username(), request.password());
 
@@ -109,17 +106,25 @@ public class AuthorizationController {
         }
     }
 
-    @Operation(summary = "Sign Out.", description = "")
-    @PostMapping("/signout")
-    public ResponseEntity<?> signOut() {
-        return  ResponseEntity.status(HttpStatus.OK).build();
+    @PostMapping("/logout")
+    public ResponseEntity<?> signOut(
+            @RequestBody TokensMapper.RefreshTokenRequest refreshTokenRequest
+    ) {
+        String refreshToken = refreshTokenRequest.refreshToken();
+        RefreshTokensEntity revokedRefreshToken = tokenServices.rotateRefreshToken(refreshToken);
+
+        Map<String, String> response = Map.of(
+                "message", "Logged out successfully."
+        );
+
+        return  ResponseEntity.status(HttpStatus.OK).body(
+                response
+        );
     }
 
-    @Operation(summary = "Refresh Token.", description = "Update the expiration time of your access token.")
     @PostMapping("/refresh")
     public ResponseEntity<?> refreshToken(
-            @RequestBody @Valid TokensMapper.RefreshTokenRequest request,
-            HttpServletRequest servletRequest
+            @RequestBody @Valid TokensMapper.RefreshTokenRequest request, HttpServletRequest servletRequest
     ) {
         RefreshTokensEntity revokedRefreshToken = tokenServices.rotateRefreshToken(request.refreshToken());
         UsersEntity currentUser = revokedRefreshToken.getUser();
