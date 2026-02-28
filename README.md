@@ -28,7 +28,7 @@
 - PostgreSQL
 - Makefile (optional)
 
-#### Running with Docker (recommended)
+### Running with Docker (recommended)
 #### 1. Clone the repository
 Clone and access the directory
 ```bash
@@ -112,3 +112,4 @@ The Swagger will be available at
 ```bash
 http://localhost:8000/swagger-ui/index.html
 ```
+

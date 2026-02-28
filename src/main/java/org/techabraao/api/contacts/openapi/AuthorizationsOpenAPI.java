@@ -1,16 +1,15 @@
-package org.techabraao.api.contacts.docs;
+package org.techabraao.api.contacts.openapi;
 
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.techabraao.api.contacts.dto.request.SignInRequest;
 import org.techabraao.api.contacts.dto.request.SignUpRequest;
 import org.techabraao.api.contacts.mappers.TokensMapper;
 
-public interface AuthorizationsDocs {
+public interface AuthorizationsOpenAPI {
 
     @Operation(
             summary = "Sign Up.",

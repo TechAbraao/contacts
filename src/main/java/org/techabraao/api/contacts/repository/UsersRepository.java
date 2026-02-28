@@ -6,13 +6,18 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.techabraao.api.contacts.entity.ContactsEntity;
 import org.techabraao.api.contacts.entity.UsersEntity;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public interface UsersRepository extends JpaRepository<UsersEntity, UUID> {
+
     UserDetails findByUsername(String username);
     boolean existsByUsername(String username);
     boolean existsByEmail(String email);
+
+    List<UsersEntity> findByUsernameContainingIgnoreCase(String username);
+    List<UsersEntity> findByEmailContainingIgnoreCase(String email);
 
     @Query("SELECT u FROM UsersEntity u LEFT JOIN FETCH u.contacts WHERE u.id = :id")
     Optional<UsersEntity> findByIdWithContacts(UUID id);

@@ -1,7 +1,5 @@
 package org.techabraao.api.contacts.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -11,15 +9,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
-import org.techabraao.api.contacts.docs.AuthorizationsDocs;
+import org.techabraao.api.contacts.openapi.AuthorizationsOpenAPI;
 import org.techabraao.api.contacts.dto.request.SignInRequest;
 import org.techabraao.api.contacts.dto.request.SignUpRequest;
 import org.techabraao.api.contacts.dto.response.ApiResponse;
 import org.techabraao.api.contacts.entity.RefreshTokensEntity;
-import org.techabraao.api.contacts.enums.Roles;
 import org.techabraao.api.contacts.exceptions.ContactAlreadyExistsException;
 import org.techabraao.api.contacts.entity.UsersEntity;
 import org.techabraao.api.contacts.mappers.TokensMapper;
@@ -34,7 +30,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
 @Tag(name = "Authorizations", description = "Operations related to authorization and authentication with Token JWT")
-public class AuthorizationController implements AuthorizationsDocs {
+public class AuthorizationController implements AuthorizationsOpenAPI {
 
     private final UserServices userServices;
     private final AuthenticationManager authenticationManager;
@@ -61,7 +57,7 @@ public class AuthorizationController implements AuthorizationsDocs {
         };
 
         userServices.addUser(credentials);
-        return ResponseEntity.status(HttpStatus.CREATED.value())
+        return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.success(
                         "User created successfully.",
                         null
@@ -99,7 +95,7 @@ public class AuthorizationController implements AuthorizationsDocs {
             throw new UsernameNotFoundException("Username not found.");
         } catch (BadCredentialsException exception) {
             return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
+                    .status(HttpStatus.UNAUTHORIZED)
                     .body(ApiResponse.error(
                             "Invalid credentials. Please try using different credentials."
                     ));

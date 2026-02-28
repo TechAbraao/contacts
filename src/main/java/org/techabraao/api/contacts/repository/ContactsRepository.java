@@ -16,6 +16,13 @@ public interface ContactsRepository extends JpaRepository<ContactsEntity, UUID> 
     Optional<ContactsEntity> findByEmailAndPhone(String email, Long phone);
 
     List<ContactsEntity> findAllByUserId(UUID userId);
+    List<ContactsEntity> findByFullNameContainingIgnoreCase(String fullName);
+    List<ContactsEntity> findByEmailContainingIgnoreCase(String email);
+    List<ContactsEntity> findByUserIdAndFullNameContainingIgnoreCase(UUID userId, String name);
+    List<ContactsEntity> findByUserIdAndEmailContainingIgnoreCase(UUID userId, String email);
+    List<ContactsEntity> findByUserIdAndIsFavoriteTrue(UUID userId);
+    List<ContactsEntity> findByIsFavoriteTrue();
+
     Optional<ContactsEntity> findByIdAndUserId(UUID id, UUID userId);
     void deleteByIdAndUserId(UUID id, UUID userId);
 }

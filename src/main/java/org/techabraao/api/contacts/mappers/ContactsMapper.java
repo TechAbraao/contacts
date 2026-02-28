@@ -22,6 +22,7 @@ public class ContactsMapper {
         entity.setFullName(contact.fullname());
         entity.setPhone(contact.phone());
         entity.setEmail(contact.email());
+        entity.setIsFavorite(contact.isFavorite());
         return entity;
     }
 
@@ -49,7 +50,8 @@ public class ContactsMapper {
                 entity.getId(),
                 entity.getFullName(),
                 entity.getPhone(),
-                entity.getEmail()
+                entity.getEmail(),
+                entity.getIsFavorite()
         );
     }
 }

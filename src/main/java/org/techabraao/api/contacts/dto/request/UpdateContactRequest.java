@@ -15,5 +15,8 @@ public record UpdateContactRequest(
 
         @Schema(description = "E-mail valid.")
         @Email(message = "Invalid email format.")
-        String email
+        String email,
+
+        @Schema(description = "Is Favorite.")
+        Boolean isFavorite
 ) {}

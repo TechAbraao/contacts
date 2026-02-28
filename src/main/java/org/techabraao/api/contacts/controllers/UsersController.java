@@ -1,7 +1,5 @@
 package org.techabraao.api.contacts.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -9,9 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.techabraao.api.contacts.docs.UsersDocs;
+import org.techabraao.api.contacts.openapi.UsersOpenAPI;
 import org.techabraao.api.contacts.dto.request.SignUpRequest;
-import org.techabraao.api.contacts.dto.request.UUIDPath;
 import org.techabraao.api.contacts.dto.request.UpdateUserRequest;
 import org.techabraao.api.contacts.dto.response.ApiResponse;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -27,7 +24,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @RequestMapping("/api/users")
 @Tag(name = "Users", description = "User-related operations.")
-public class UsersController implements UsersDocs {
+public class UsersController implements UsersOpenAPI {
     private final UserServices userServices;
     private final PasswordEncoder passwordEncoder;
 
@@ -43,8 +40,12 @@ public class UsersController implements UsersDocs {
     }
 
     @GetMapping
-    public ResponseEntity<?> getAllUsers() {
-        List<UsersResponse> allUsers = userServices.allUsers();
+    public ResponseEntity<?> getAllUsers(
+            @RequestParam(required = false) String username,
+            @RequestParam(required = false) String email
+    ) {
+
+        List<UsersResponse> allUsers = userServices.allUsers(username, email);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
