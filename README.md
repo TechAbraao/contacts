@@ -70,7 +70,7 @@ docker compose --env-file .env -f docker/compose/docker-compose-dev.yml up -d
 ```
 Or with Makefile (Linux/Unix):
 ```bash
-make start
+make up
 ```
 > Check out more commands by typing `make` in the terminal. These commands are solely for development assistance.
 
@@ -98,12 +98,12 @@ spring:
 
 #### 3. Run the application
 ```bash
-./mvnw clean install -DskipTests
-./mvnw spring-boot:run
+mvn clean install -DskipTests
+mvn spring-boot:run
 ```
 To run with tests:
 ```bash
-./mvnw test
+mvn test
 ```
 
 #### 4. Availability
@@ -124,7 +124,7 @@ Use this flow to run both the application and the database as containers.
 
 #### 1. Build the application JAR
 ```bash
-./mvnw package -DskipTests
+mvn package -DskipTests
 ```
 
 #### 2. Build the Docker image
