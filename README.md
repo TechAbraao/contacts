@@ -66,7 +66,7 @@ Use this flow if you want to run the application directly with Maven, while the 
 
 #### 1. Start the database container
 ```bash
-docker compose --env-file .env -f docker/compose/docker-compose.yml up -d
+docker compose --env-file .env -f docker/compose/docker-compose-dev.yml up -d
 ```
 Or with Makefile (Linux/Unix):
 ```bash
@@ -133,7 +133,7 @@ docker build -f docker/dockerfiles/Dockerfile -t contacts .
 ```
 
 #### 3. Configure `application.yml`
-Since both services run inside Docker, the application must connect to PostgreSQL using the **service name** defined in `docker-compose.yml` (`postgres`), not `localhost`:
+Since both services run inside Docker, the application must connect to PostgreSQL using the **service name** defined in `docker-compose-prod.yml` (`postgres`), not `localhost`:
 ```yml
 server:
   port: 8080
@@ -154,7 +154,7 @@ spring:
       password: admin
 ```
 
-> Alternatively, you can keep `localhost` in `application.yml` and override the URL via environment variable in `docker-compose.yml`:
+> Alternatively, you can keep `localhost` in `application.yml` and override the URL via environment variable in `docker-compose-prod.yml`:
 > ```yaml
 > environment:
 >   SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/contacts_db
@@ -162,7 +162,7 @@ spring:
 
 #### 4. Start all containers
 ```bash
-docker compose --env-file .env -f docker/compose/docker-compose.yml up -d
+docker compose --env-file .env -f docker/compose/docker-compose-prod.yml up -d
 ```
 
 #### 5. Verify running containers
