@@ -175,12 +175,7 @@ docker ps
 docker logs contacts_app
 ```
 
-#### 7. Stop all containers
-```bash
-docker compose down
-```
-
-#### 8. Availability
+#### 7. Availability
 API:
 ```
 http://localhost:8080/api/
