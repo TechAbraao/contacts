@@ -20,28 +20,29 @@
     <img alt="Static Badge" src="https://img.shields.io/badge/Token JWT-grey?style=flat&logo=JSON">
 </section>
 
-### How to Start
-#### Pre-requisites
-- Java (21)
+---
+
+### Pre-requisites
+- Java 21
 - Apache Maven (3.8.7+)
 - Docker
-- PostgreSQL
-- Makefile (optional)
 
-### Running with Docker (recommended)
+---
+
+### Getting Started
+
 #### 1. Clone the repository
-Clone and access the directory
 ```bash
-git@github.com:TechAbraao/contacts.git
-cd ./contacts
+git clone git@github.com:TechAbraao/contacts.git
+cd contacts
 ```
 
-#### 2. Configure the environment variables.
-Change the `.env.example` file to `.env`. For example:
-````bash
+#### 2. Configure environment variables
+Copy the example file and fill in your values:
+```bash
 cp .env.example .env
-````
-Now configure the necessary variables for the Docker container (minimal example):
+```
+Minimal `.env` example:
 ```bash
 ## POSTGRESQL ##
 POSTGRES_CONTAINER_NAME=contacts_postgres
@@ -57,8 +58,23 @@ PGADMIN_EMAIL=admin@example.com
 PGADMIN_PASSWORD=secret
 ```
 
-#### 3. Configure the application.yml file.
-The application is pre-configured to use environment variables. Below is the recommended configuration for your `src/main/resources/application.yml` (minimal example):
+---
+
+### Flow 1 — Run locally (application on host, PostgreSQL on Docker)
+
+Use this flow if you want to run the application directly with Maven, while the database runs in a container.
+
+#### 1. Start the database container
+```bash
+docker compose --env-file .env -f docker/compose/docker-compose.yml up -d
+```
+Or with Makefile (Linux/Unix):
+```bash
+make start
+```
+
+#### 2. Configure `application.yml`
+Since the application runs on your host machine, it connects to PostgreSQL via `localhost`:
 ```yml
 server:
   port: 8080
@@ -79,37 +95,96 @@ spring:
       password: admin
 ```
 
-#### 4. Initialize the containers
-If you have the Makefile (Linux/Unix system):
+#### 3. Run the application
 ```bash
-make start
+./mvnw clean install -DskipTests
+./mvnw spring-boot:run
 ```
-If not, do it manually:
+To run with tests:
 ```bash
-docker compose \
-  --env-file .env \
-  -f docker/compose/docker-compose.yml \
-  up -d
+./mvnw test
 ```
 
-#### 5. Run the application
-```bash
-mvn clean install
-mvn spring-boot:run
+#### 4. Availability
+API:
 ```
-If you want to run the tests:
-```bash
-mvn test
+http://localhost:8080/api/
 ```
-
-#### 6. Availability
-The API will be available at
-```bash
-http://localhost:8000/api/
+Swagger UI:
 ```
-API Swagger
-The Swagger will be available at
-```bash
-http://localhost:8000/swagger-ui/index.html
+http://localhost:8080/swagger-ui/index.html
 ```
 
+---
+
+### Flow 2 — Run everything with Docker (recommended for production)
+
+Use this flow to run both the application and the database as containers.
+
+#### 1. Build the application JAR
+```bash
+./mvnw package -DskipTests
+```
+
+#### 2. Build the Docker image
+```bash
+docker build -f docker/dockerfiles/Dockerfile -t contacts .
+```
+
+#### 3. Configure `application.yml`
+Since both services run inside Docker, the application must connect to PostgreSQL using the **service name** defined in `docker-compose.yml` (`postgres`), not `localhost`:
+```yml
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/contacts_db
+    username: postgres
+    password: secret
+    driver-class-name: org.postgresql.Driver
+
+  security:
+    jwt:
+      secret: secret
+    user:
+      email: admin@admin.com
+      name: admin
+      password: admin
+```
+
+> Alternatively, you can keep `localhost` in `application.yml` and override the URL via environment variable in `docker-compose.yml`:
+> ```yaml
+> environment:
+>   SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/contacts_db
+> ```
+
+#### 4. Start all containers
+```bash
+docker compose --env-file .env -f docker/compose/docker-compose.yml up -d
+```
+
+#### 5. Verify running containers
+```bash
+docker ps
+```
+
+#### 6. View application logs
+```bash
+docker logs contacts_app
+```
+
+#### 7. Stop all containers
+```bash
+docker compose down
+```
+
+#### 8. Availability
+API:
+```
+http://localhost:8080/api/
+```
+Swagger UI:
+```
+http://localhost:8080/swagger-ui/index.html
+```

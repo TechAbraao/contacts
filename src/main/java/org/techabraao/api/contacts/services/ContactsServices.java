@@ -72,7 +72,7 @@ public class ContactsServices {
         }
 
         return Collections.emptyList();
-    }
+    };
 
     public ContactsDTO addContact(ContactsDTO dto, UUID userId) {
         contactsValidators.validateContactDoesNotExist(dto, userId);
@@ -83,7 +83,7 @@ public class ContactsServices {
         entity.setUser(user);
 
         return ContactsMapper.toDTO(contactsRepository.save(entity));
-    }
+    };
 
     public List<ContactsResponse> allContactsByUserId(UUID userId, String name, String email) {
 
@@ -96,7 +96,7 @@ public class ContactsServices {
                 .stream()
                 .map(ContactsMapper::toResponse)
                 .toList();
-    }
+    };
 
     public List<ContactsResponse> allContacts(String name, String email) {
 
@@ -108,7 +108,7 @@ public class ContactsServices {
         return contacts.stream()
                 .map(ContactsMapper::toResponse)
                 .toList();
-    }
+    };
 
     public List<ContactsResponse> allContactsWhereIsFavorite(UUID userId, Roles userRole) {
         List<ContactsEntity> allContacts;
@@ -124,7 +124,7 @@ public class ContactsServices {
         return allContacts.stream().map(
                 ContactsMapper::toResponse
         ).toList();
-    }
+    };
 
     @Transactional
     public Boolean updateIsFavorite(UUID userId, Roles userRole, String contactId) {
@@ -137,7 +137,7 @@ public class ContactsServices {
         contactsRepository.save(contact);
 
         return contact.getIsFavorite();
-    }
+    };
 
     @Transactional
     public ContactsResponse updateContactByUserId(UUID contactId, UpdateContactRequest request, UUID userId) {
@@ -157,14 +157,14 @@ public class ContactsServices {
         }
 
         return ContactsMapper.toResponse(contactChanged);
-    }
+    };
 
     @Transactional
     public void deleteContactById(UUID contactId, UUID userId) {
         // * Regra de Negócio: Um usuário só pode deletar os próprios contatos. * //
         ContactsEntity contact = contactsValidators.contactOwnersShip(contactId, userId);
         contactsRepository.delete(contact);
-    }
+    };
 
     @Transactional
     public void deleteContact(UUID contactId) {
@@ -174,13 +174,12 @@ public class ContactsServices {
         } else {
             throw new ContactNotFoundException("Contact with id: " + contactId + " does not exist.");
         }
-    }
+    };
 
     public ContactsResponse findById(UUID contactId, UUID userId) {
         // * Regra de Negócio: Um usuário só pode consultar seus próprios contatos. * //
         ContactsEntity contact = contactsValidators.contactOwnersShip(contactId, userId);
         return  ContactsMapper.toResponse(contact);
     };
-
 
 }
