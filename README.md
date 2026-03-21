@@ -1,6 +1,6 @@
 # API REST for Contacts
 
-### Tecnologias
+### Technologies
 <section align="left">
     <img alt="Static Badge" src="https://img.shields.io/badge/Java 21.0.7-grey?style=flat&logo=openjdk">
     <img alt="Static Badge" src="https://img.shields.io/badge/Spring%20Boot 3.5.3-grey?style=flat&logo=springboot">
@@ -72,6 +72,7 @@ Or with Makefile (Linux/Unix):
 ```bash
 make start
 ```
+> Check out more commands by typing `make` in the terminal. These commands are solely for development assistance.
 
 #### 2. Configure `application.yml`
 Since the application runs on your host machine, it connects to PostgreSQL via `localhost`:
