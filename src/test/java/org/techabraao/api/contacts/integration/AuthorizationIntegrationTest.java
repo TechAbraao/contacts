@@ -1,10 +1,7 @@
 package org.techabraao.api.contacts.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,6 +13,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.techabraao.api.contacts.dto.SignInDTO;
 import org.techabraao.api.contacts.dto.SignUpDTO;
 import org.techabraao.api.contacts.enums.Roles;
+import org.techabraao.api.contacts.repository.RefreshTokensRepository;
 import org.techabraao.api.contacts.repository.UsersRepository;
 import org.techabraao.api.contacts.services.AuthorizationServices;
 
@@ -44,8 +42,18 @@ public class AuthorizationIntegrationTest {
     @Autowired
     private UsersRepository usersRepository;
 
+    @Autowired
+    private RefreshTokensRepository refreshTokensRepository;
+
     @BeforeEach
     public void cleanDatabase() {
+        refreshTokensRepository.deleteAll();
+        usersRepository.deleteAll();
+    }
+
+    @AfterEach
+    public void cleanDatabaseAfter() {
+        refreshTokensRepository.deleteAll();
         usersRepository.deleteAll();
     }
 
