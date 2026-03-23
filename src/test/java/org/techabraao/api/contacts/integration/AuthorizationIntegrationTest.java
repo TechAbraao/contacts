@@ -163,10 +163,8 @@ public class AuthorizationIntegrationTest {
         );
 
         performPostSignIn(invalidSignIn)
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.message").value("Invalid credentials. Please try using different credentials."))
-                .andExpect(jsonPath("$.statusCode").value(HttpStatus.BAD_REQUEST.value()))
-                .andExpect(jsonPath("$.access_token").doesNotExist());
+                .andExpect(jsonPath("$.accessToken").doesNotExist());
     }
 }

@@ -7,8 +7,8 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Compile Project
-          command: mvn compile
+          name: Compile Project (.JAR)
+          command: mvn package -DskipTests
 
   tests:
     docker:
@@ -19,6 +19,25 @@ jobs:
           name: Run JUnit Tests
           command: mvn test
 
+  docker-push:
+    docker:
+      - image: cimg/openjdk:21.0
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build Artifact
+          command: mvn package -DskipTests
+      - run:
+          name: Build Docker Image
+          command: docker build -f docker/dockerfiles/Dockerfile -t $DOCKERHUB_USERNAME/contacts:latest .
+      - run:
+          name: DockerHub Login
+          command: echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
+      - run:
+          name: Sending to DockerHub
+          command: docker push $DOCKERHUB_USERNAME/contacts:latest
+
 workflows:
   pipeline:
     jobs:
@@ -26,3 +45,11 @@ workflows:
       - tests:
           requires:
             - build
+      - docker-push:
+          requires:
+            - tests
+          filters:
+            branches:
+              only:
+                - main
+                - dev
