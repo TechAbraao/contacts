@@ -1,19 +1,28 @@
-version: 1.0.0
+version: 2.1
 
 jobs:
   build:
     docker:
-      image: cimg/openjdk:21.0
+      - image: cimg/openjdk:21.0
     steps:
       - checkout
       - run:
           name: Compile Project
           command: mvn compile
+
   tests:
     docker:
-      image: cimg/openjdk:21.0
+      - image: cimg/openjdk:21.0
     steps:
       - checkout
       - run:
           name: Run JUnit Tests
           command: mvn test
+
+workflows:
+  pipeline:
+    jobs:
+      - build
+      - tests:
+          requires:
+            - build
