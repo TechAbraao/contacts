@@ -76,6 +76,7 @@ make up
 
 #### 2. Configure `application.yml`
 Since the application runs on your host machine, it connects to PostgreSQL via `localhost`:
+
 ```yml
 server:
   port: 8080
@@ -123,6 +124,7 @@ http://localhost:8080/swagger-ui/index.html
 Use this flow to run both the application and the database as containers.
 
 #### 1. Build the application JAR
+
 ```bash
 mvn package -DskipTests
 ```
