@@ -78,12 +78,7 @@ public class AuthorizationIntegrationTest {
         ResultActions response = performPostSignUp(payloadCredentials)
                 .andExpect(status().isCreated());
 
-        response
-                .andExpect(
-                        jsonPath("$.message").value("User created successfully."))
-                .andExpect(
-                        jsonPath("$.statusCode").value(HttpStatus.CREATED.value())
-                );
+        response.andExpect(jsonPath("$.message").value("User created successfully."));
     }
 
     @Test
@@ -120,9 +115,7 @@ public class AuthorizationIntegrationTest {
         ResultActions responseConflit = performPostSignUp(payloadCredentials)
                 .andExpect(status().isConflict());
 
-        responseConflit
-                .andExpect(jsonPath("$.message").value("Email or username already in use."))
-                .andExpect(jsonPath("$.statusCode").value(HttpStatus.CONFLICT.value()));
+        responseConflit.andExpect(jsonPath("$.message").value("Email or username already in use."));
     }
 
     @Test
@@ -146,9 +139,10 @@ public class AuthorizationIntegrationTest {
         ResultActions responseSignIn = performPostSignIn(payloadSignIn)
                 .andExpect(status().isOk());
 
-        responseSignIn.andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.statusCode").value(HttpStatus.OK.value()))
-                .andExpect(jsonPath("$.access_token").isNotEmpty());
+        responseSignIn
+                .andExpect(jsonPath("$.accessToken").isNotEmpty())
+                .andExpect(jsonPath("$.refreshToken").isNotEmpty())
+                .andExpect(jsonPath("$.type").value("Bearer"));
     }
 
     @Test

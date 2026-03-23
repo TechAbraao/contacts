@@ -1,0 +1,19 @@
+version: 1.0.0
+
+jobs:
+  build:
+    docker:
+      image: cimg/openjdk:17.0
+    steps:
+      - checkout
+      - run:
+          name: Compile Project
+          command: mvn compile
+  tests:
+    docker:
+      - image: cimg/openjdk:17.0
+    steps:
+      - checkout
+      - run:
+          name: Run JUnit Tests
+          command: mvn test
