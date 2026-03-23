@@ -61,7 +61,24 @@ public class UserServices {
         return UsersMapper.toResponse(user);
     };
 
-    public List<UsersResponse> allUsers() {
+    public List<UsersResponse> allUsers(String username, String email) {
+
+        if (username != null) {
+            List<UsersEntity> usersWithFilterUsername =  repository
+                    .findByUsernameContainingIgnoreCase(username);
+            return usersWithFilterUsername.stream()
+                    .map(UsersMapper::toResponse)
+                    .toList();
+        }
+
+        if (email != null) {
+            List<UsersEntity> usersWithFilterEmail =  repository
+                    .findByEmailContainingIgnoreCase(email);
+            return usersWithFilterEmail.stream()
+                    .map(UsersMapper::toResponse)
+                    .toList();
+        }
+
         List<UsersEntity> allUsers = repository.findAll();
         return allUsers.stream()
                 .map(UsersMapper::toResponse)
@@ -98,6 +115,4 @@ public class UserServices {
 
         return UsersMapper.toResponse(user);
     }
-
-
 }

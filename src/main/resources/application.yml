@@ -1,5 +1,10 @@
 server:
-  port: 8000
+  port: 8080
+
+springdoc:
+  swagger-ui:
+    operationsSorter: alpha
+    tagsSorter: alpha
 
 spring:
   application:
@@ -7,6 +12,8 @@ spring:
     description: Contacts REST API developed with Spring Boot
 
   security:
+    jwt:
+      secret: SECRETKEY
     user:
       email: admin@admin.com
       name: admin

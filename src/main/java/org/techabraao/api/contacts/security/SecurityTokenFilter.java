@@ -37,7 +37,7 @@ public class SecurityTokenFilter extends OncePerRequestFilter {
         var token = this.recoverToken(request);
 
         if (token != null) {
-            var subject = tokenServices.validateToken(token);
+            var subject = tokenServices.validateAccessToken(token);
             UUID userId = UUID.fromString(subject);
             Optional<UsersEntity> userOptional = userRepository.findById(userId);
 

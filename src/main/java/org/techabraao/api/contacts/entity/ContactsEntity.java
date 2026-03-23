@@ -31,4 +31,7 @@ public class ContactsEntity {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UsersEntity user;
+
+    @Column(name = "isFavorite", nullable = false)
+    private Boolean isFavorite = Boolean.FALSE;
 }

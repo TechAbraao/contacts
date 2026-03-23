@@ -21,8 +21,8 @@ public class ContactsValidators {
 
     private final Logger logger = LoggerFactory.getLogger(ContactsValidators.class);
 
+    //* Regra de Negócio: Verificar se as credenciais já existem na base de dados. *//
     public void validateContactDoesNotExist(ContactsDTO contact, UUID userId) {
-        //* Regra de Negócio: Verificar se as credenciais já existem na base de dados. *//
 
         boolean existsEmailAndPhone = contactsRepository.existsByEmailAndPhoneAndUser_Id(
                 contact.email(),
@@ -40,6 +40,7 @@ public class ContactsValidators {
         }
     }
 
+    //* Regra de Negócio: Verifica se o contato pertence ao usuário atual autenticado. *//
     public ContactsEntity contactOwnersShip(UUID contactId, UUID userId) {
         return contactsRepository
                 .findByIdAndUserId(contactId, userId)

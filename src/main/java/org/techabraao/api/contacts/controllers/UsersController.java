@@ -1,7 +1,5 @@
 package org.techabraao.api.contacts.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -9,8 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.techabraao.api.contacts.openapi.UsersOpenAPI;
 import org.techabraao.api.contacts.dto.request.SignUpRequest;
-import org.techabraao.api.contacts.dto.request.UUIDPath;
 import org.techabraao.api.contacts.dto.request.UpdateUserRequest;
 import org.techabraao.api.contacts.dto.response.ApiResponse;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,17 +23,12 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/users")
-@Tag(name = "Users", description = "Obtain user data and/or your data.")
-public class UsersController {
+@Tag(name = "Users", description = "User-related operations.")
+public class UsersController implements UsersOpenAPI {
     private final UserServices userServices;
     private final PasswordEncoder passwordEncoder;
 
     @GetMapping("/me")
-    @Operation(
-            summary = "Get User Infos",
-            description = "Get information from the authenticated user",
-            security = {@SecurityRequirement(name = "bearerAuth")}
-    )
     public ResponseEntity<?> getInfosAboutMe(@AuthenticationPrincipal UsersEntity user) {
         UUID userId = user.getId();
 
@@ -47,13 +40,12 @@ public class UsersController {
     }
 
     @GetMapping
-    @Operation(
-            summary = "Get All Users",
-            description = "Get the data list for all users.",
-            security = {@SecurityRequirement(name = "basicAuth")}
-    )
-    public ResponseEntity<?> getAllUsers() {
-        List<UsersResponse> allUsers = userServices.allUsers();
+    public ResponseEntity<?> getAllUsers(
+            @RequestParam(required = false) String username,
+            @RequestParam(required = false) String email
+    ) {
+
+        List<UsersResponse> allUsers = userServices.allUsers(username, email);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -63,11 +55,6 @@ public class UsersController {
     }
 
     @GetMapping("/{userId}")
-    @Operation(
-            summary = "Get User By ID",
-            description = "",
-            security = {@SecurityRequirement(name = "basicAuth")}
-    )
     public ResponseEntity<?> getUserById(
             @PathVariable UUID userId
     ) {
@@ -82,11 +69,6 @@ public class UsersController {
     }
 
     @PostMapping
-    @Operation(
-            summary = "Create User",
-            description = "",
-            security = {@SecurityRequirement(name = "basicAuth")}
-    )
     public ResponseEntity<?> createUser(
             @RequestBody @Valid SignUpRequest request
     ) {
@@ -97,11 +79,6 @@ public class UsersController {
     }
 
     @DeleteMapping("/{userId}")
-    @Operation(
-            summary = "Delete User",
-            description = "",
-            security = {@SecurityRequirement(name = "basicAuth")}
-    )
     public ResponseEntity<?> deleteUser(
             @PathVariable UUID userId
     ) {
@@ -115,11 +92,6 @@ public class UsersController {
     }
 
     @PutMapping("/{userId}")
-    @Operation(
-            summary = "Change User By ID",
-            description = "",
-            security = {@SecurityRequirement(name = "basicAuth")}
-    )
     public ResponseEntity<?> changeUserById(
             @PathVariable UUID userId,
             @RequestBody @Valid UpdateUserRequest request

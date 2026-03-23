@@ -1,6 +1,6 @@
 # API REST for Contacts
 
-### Tecnologias
+### Technologies
 <section align="left">
     <img alt="Static Badge" src="https://img.shields.io/badge/Java 21.0.7-grey?style=flat&logo=openjdk">
     <img alt="Static Badge" src="https://img.shields.io/badge/Spring%20Boot 3.5.3-grey?style=flat&logo=springboot">
@@ -20,28 +20,29 @@
     <img alt="Static Badge" src="https://img.shields.io/badge/Token JWT-grey?style=flat&logo=JSON">
 </section>
 
-### How to Start
-#### Pre-requisites
-- Java (21)
+---
+
+### Pre-requisites
+- Java 21
 - Apache Maven (3.8.7+)
 - Docker
-- PostgreSQL
-- Makefile (optional)
 
-#### Running with Docker (recommended)
+---
+
+### Getting Started
+
 #### 1. Clone the repository
-Clone and access the directory
 ```bash
-git@github.com:TechAbraao/contacts.git
-cd ./contacts
+git clone git@github.com:TechAbraao/contacts.git
+cd contacts
 ```
 
-#### 2. Configure the environment variables.
-Change the `.env.example` file to `.env`. For example:
-````bash
+#### 2. Configure environment variables
+Copy the example file and fill in your values:
+```bash
 cp .env.example .env
-````
-Now configure the necessary variables for the Docker container (minimal example):
+```
+Minimal `.env` example:
 ```bash
 ## POSTGRESQL ##
 POSTGRES_CONTAINER_NAME=contacts_postgres
@@ -57,8 +58,25 @@ PGADMIN_EMAIL=admin@example.com
 PGADMIN_PASSWORD=secret
 ```
 
-#### 3. Configure the application.yml file.
-The application is pre-configured to use environment variables. Below is the recommended configuration for your `src/main/resources/application.yml` (minimal example):
+---
+
+### Flow 1 — Run locally (application on host, PostgreSQL on Docker)
+
+Use this flow if you want to run the application directly with Maven, while the database runs in a container.
+
+#### 1. Start the database container
+```bash
+docker compose --env-file .env -f docker/compose/docker-compose-dev.yml up -d
+```
+Or with Makefile (Linux/Unix):
+```bash
+make up
+```
+> Check out more commands by typing `make` in the terminal. These commands are solely for development assistance.
+
+#### 2. Configure `application.yml`
+Since the application runs on your host machine, it connects to PostgreSQL via `localhost`:
+
 ```yml
 server:
   port: 8080
@@ -71,70 +89,100 @@ spring:
     driver-class-name: org.postgresql.Driver
 
   security:
+    jwt:
+      secret: secret
     user:
-      email: admin@example.com
+      email: admin@admin.com
       name: admin
-      password: secret
+      password: admin
 ```
 
-#### 4. Initialize the containers
-If you have the Makefile (Linux/Unix system):
+#### 3. Run the application
 ```bash
-make start
-```
-If not, do it manually:
-```bash
-docker compose \
-  --env-file .env \
-  -f docker/compose/docker-compose.yml \
-  up -d
-```
-
-#### 5. Run the application
-```bash
-mvn clean install
+mvn clean install -DskipTests
 mvn spring-boot:run
 ```
-
-#### 6. Availability
-The API will be available at:
+To run with tests:
 ```bash
-http://localhost:8000/api/
-```
-API Swagger
-Swagger available in:
-```bash
-http://localhost:8000/swagger-ui/index.html
+mvn test
 ```
 
-### API RESTful Definitions
-#### Endpoints
-Check out all the endpoints available in this project.
-##### Authorizations
+#### 4. Availability
+API:
+```
+http://localhost:8080/api/
+```
+Swagger UI:
+```
+http://localhost:8080/swagger-ui/index.html
+```
 
-| Method | URL                 | Description                | Authentication          |
-| ------ | ------------------- | -------------------------- |-------------------------|
-| POST   | `/api/auth/signup`  | Register a new user        | public                  |
-| POST   | `/api/auth/signin`  | Login and obtain JWT token | public                  |
-| POST   | `/api/auth/signout` | Logout (invalidate token)  | basicAuth or bearerAuth |
+---
 
+### Flow 2 — Run everything with Docker (recommended for production)
 
-##### Users
+Use this flow to run both the application and the database as containers.
 
-| Method | URL                   | Description                 | Authentication         |
-|--------|-----------------------|-----------------------------|------------------------|
-| GET    | `/api/users/me`       | Get authenticated user data | basicAuth              |
-| GET    | `/api/users`          | Get all Users               | basicAuth              |
-| POST   | `/api/users`          | Create a User               | basicAuth              |
-| GET    | `/api/users/{userId}` | Get User by ID              | basicAuth              |
-| DELETE | `/api/users/{userId}` | Delete User by ID           | basicAuth or bearerAuth |
+#### 1. Build the application JAR
 
-##### Contacts
+```bash
+mvn package -DskipTests
+```
 
-| Method | URL                         | Description            | Authentication          |
-|--------|-----------------------------|------------------------|-------------------------|
-| GET    | `/api/contacts`             | List my contacts       | basicAuth or bearerAuth |
-| POST   | `/api/contacts`             | Create a new contact   | basicAuth or bearerAuth |
-| GET    | `/api/contacts/{contactId}` | Get a specific contact | basicAuth or bearerAuth |
-| PUT    | `/api/contacts/{contactId}` | Update a contact       | basicAuth or bearerAuth |
-| DELETE | `/api/contacts/{contactId}` | Delete a contact       | basicAuth or bearerAuth |
+#### 2. Build the Docker image
+```bash
+docker build -f docker/dockerfiles/Dockerfile -t contacts .
+```
+
+#### 3. Configure `application.yml`
+Since both services run inside Docker, the application must connect to PostgreSQL using the **service name** defined in `docker-compose-prod.yml` (`postgres`), not `localhost`:
+```yml
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/contacts_db
+    username: postgres
+    password: secret
+    driver-class-name: org.postgresql.Driver
+
+  security:
+    jwt:
+      secret: secret
+    user:
+      email: admin@admin.com
+      name: admin
+      password: admin
+```
+
+> Alternatively, you can keep `localhost` in `application.yml` and override the URL via environment variable in `docker-compose-prod.yml`:
+> ```yaml
+> environment:
+>   SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/contacts_db
+> ```
+
+#### 4. Start all containers
+```bash
+docker compose --env-file .env -f docker/compose/docker-compose-prod.yml up -d
+```
+
+#### 5. Verify running containers
+```bash
+docker ps
+```
+
+#### 6. View application logs
+```bash
+docker logs contacts_app
+```
+
+#### 7. Availability
+API:
+```
+http://localhost:8080/api/
+```
+Swagger UI:
+```
+http://localhost:8080/swagger-ui/index.html
+```

@@ -6,6 +6,7 @@ public record ContactsResponse(
         UUID id,
         String fullName,
         Long phone,
-        String email
+        String email,
+        Boolean isFavorite
 ) {
 }

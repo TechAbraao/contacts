@@ -1,19 +1,17 @@
 package org.techabraao.api.contacts.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Null;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.jdbc.Expectation;
 import org.slf4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.techabraao.api.contacts.openapi.ContactsOpenAPI;
 import org.techabraao.api.contacts.dto.ContactsDTO;
 import org.techabraao.api.contacts.dto.request.ContactsRequest;
+import org.techabraao.api.contacts.dto.request.UpdateContactRequest;
 import org.techabraao.api.contacts.dto.response.ApiResponse;
 import org.techabraao.api.contacts.dto.response.ContactsResponse;
 import org.techabraao.api.contacts.entity.UsersEntity;
@@ -30,20 +28,16 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @RequestMapping("/api/contacts")
 @Tag(name = "Contacts", description = "Operations related to contacts")
-public class ContactsController {
+public class ContactsController implements ContactsOpenAPI {
     private final ContactsServices contactsServices;
     private final FormatsValidators formatsValidators;
 
     private final Logger logger = LoggerFactory.getLogger(ContactsController.class);
 
     @PostMapping
-    @Operation(
-            summary = "Add a new Contact",
-            description = "This endpoint will add a contact based on the authenticated user",
-            security = {@SecurityRequirement(name = "bearerAuth"), @SecurityRequirement(name = "basicAuth")}
-    )
     public ResponseEntity<?> createContact(
-            @RequestBody @Valid ContactsRequest contactsRequest, @AuthenticationPrincipal UsersEntity me
+            @RequestBody @Valid ContactsRequest contactsRequest,
+            @AuthenticationPrincipal UsersEntity me
     ) {
         UUID userId = me.getId();
         logger.info("Contact request received (ContactRequest): fullName - {}, phone - {}, email: {}",
@@ -65,13 +59,10 @@ public class ContactsController {
     }
 
     @GetMapping
-    @Operation(
-            summary = "Get all Contacts by User ID",
-            description = "",
-            security = {@SecurityRequirement(name = "bearerAuth"), @SecurityRequirement(name = "basicAuth")}
-    )
     public ResponseEntity<?> getAllContactsByUserId(
-            @AuthenticationPrincipal UsersEntity me
+            @AuthenticationPrincipal UsersEntity me,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String email
     ) {
         UUID userId = me.getId();
         Roles userRole = me.getRoles();
@@ -80,10 +71,10 @@ public class ContactsController {
         logger.info("Authenticated user has User ID equal to: '{}'.", userId);
         if (userRole.equals(Roles.ADMIN)) {
             logger.info("Searching all contacts through the administrator user. Your role is: {}", userRole);
-            allContacts = contactsServices.allContacts();
+            allContacts = contactsServices.allContacts(name, email);
         } else {
             logger.info("Searching all contacts through the basic user. Your role is: {} ", userRole);
-            allContacts = contactsServices.allContactsByUserId(userId);
+            allContacts = contactsServices.allContactsByUserId(userId, name, email);
         }
 
         return ResponseEntity
@@ -93,23 +84,22 @@ public class ContactsController {
                         allContacts
                 ));
     }
-
     @DeleteMapping("/{contactId}")
-    @Operation(
-            summary = "....",
-            description = "....",
-            security = {@SecurityRequirement(name = "bearerAuth"), @SecurityRequirement(name = "basicAuth")}
-    )
     public ResponseEntity<?> deleteContactsByUserId(
-            @AuthenticationPrincipal UsersEntity me, @PathVariable String contactId
+            @AuthenticationPrincipal UsersEntity me,
+            @PathVariable String contactId
     ) {
         UUID idContact = formatsValidators.validateUUID(contactId);
-        logger.info("UUID successfully validated (String => UUID): '{}'.", contactId);
-
         UUID userId = me.getId();
-        logger.info("Authenticated user has User ID equal to: '{}'.", userId);
+        Roles userRoles = me.getRoles();
 
-        contactsServices.deleteContactById(idContact, userId);
+        if (userRoles.equals(Roles.ADMIN)) {
+            logger.info("Deleting contact by ID. Your role is: {}", userRoles);
+            contactsServices.deleteContact(idContact);
+        } else {
+            logger.info("Deleting contact by ID. Your role is: {}", userRoles);
+            contactsServices.deleteContactById(idContact, userId);
+        }
 
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
@@ -117,13 +107,9 @@ public class ContactsController {
     }
 
     @GetMapping("/{contactId}")
-    @Operation(
-            summary = "",
-            description = "",
-            security = {@SecurityRequirement(name = "bearerAuth"), @SecurityRequirement(name = "basicAuth")}
-    )
     public ResponseEntity<?> getContactById(
-            @AuthenticationPrincipal UsersEntity me, @PathVariable String contactId
+            @AuthenticationPrincipal UsersEntity me,
+            @PathVariable String contactId
     ) {
         UUID idContact = formatsValidators.validateUUID(contactId);
         logger.info("UUID successfully validated (String => UUID): '{}'.", contactId);
@@ -141,4 +127,52 @@ public class ContactsController {
                         contact
                 ));
     }
+
+    @PutMapping("/{contactId}")
+    public ResponseEntity<?> updateContactByUserId(
+            @PathVariable String contactId,
+            @RequestBody UpdateContactRequest request,
+            @AuthenticationPrincipal UsersEntity me
+    ) {
+        UUID userId = me.getId();
+
+        UUID id = formatsValidators.validateUUID(contactId);
+
+        ContactsResponse contactChanged = contactsServices.updateContactByUserId(id, request, userId);
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(
+                "Contact information successfully changed.",
+                contactChanged
+        ));
+    }
+
+    @GetMapping("/favorites")
+    public ResponseEntity<?> getAllFavoriteContacts(
+            @AuthenticationPrincipal UsersEntity me
+    ) {
+        Roles userRole = me.getRoles();
+        UUID userId = me.getId();
+
+        List<ContactsResponse> allContacts = contactsServices.allContactsWhereIsFavorite(userId, userRole);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.success(
+                        "All favorite contacts successfully found.",
+                        allContacts
+                ));
+    };
+
+    @PatchMapping("/{contactId}/favorite")
+    public ResponseEntity<?> patchFavoriteContact(
+            @AuthenticationPrincipal UsersEntity me,
+            @PathVariable String contactId
+    ) {
+        Roles userRole = me.getRoles();
+        UUID userId = me.getId();
+
+        Boolean updated = contactsServices.updateIsFavorite(userId, userRole, contactId);
+
+        return ResponseEntity.ok().build();
+    };
+
 }
