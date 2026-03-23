@@ -3,7 +3,7 @@ version: 1.0.0
 jobs:
   build:
     docker:
-      image: cimg/openjdk:17.0
+      image: cimg/openjdk:21.0
     steps:
       - checkout
       - run:
@@ -11,7 +11,7 @@ jobs:
           command: mvn compile
   tests:
     docker:
-      - image: cimg/openjdk:17.0
+      - image: cimg/openjdk:21.0
     steps:
       - checkout
       - run:
